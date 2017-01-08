@@ -59,6 +59,7 @@ execute "install openrave_sample_app" do
   command <<-EOS
 git clone https://github.com/cielavenir/openrave_sample_app.git
 cd openrave_sample_app
+python manage.py makemigrations openrave
 python manage.py migrate
 echo "ready for `python manage.py runserver 0.0.0.0:8000`."
 cd ..
