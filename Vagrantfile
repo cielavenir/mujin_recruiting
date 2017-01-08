@@ -22,5 +22,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #  chef.cookbooks_path = "cookbooks"
   #  chef.add_recipe "mujin"
   #end
+  config.vm.network :forwarded_port, guest: 8000, host: 8000
   config.vm.network :forwarded_port, guest: 8080, host: 8080
 end
