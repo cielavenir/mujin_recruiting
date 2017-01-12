@@ -66,3 +66,11 @@ echo "ready for `python manage.py runserver 0.0.0.0:8000`."
 cd ..
   EOS
 end
+execute "configure jenkins" do
+  command <<-EOS
+mkdir /var/lib/jenkins/jobs/openrave_sample_app
+wget -O /var/lib/jenkins/jobs/openrave_sample_app/config.xml https://raw.githubusercontent.com/cielavenir/mujin_recruiting/master/jenkins_config.xml
+chown -RH jenkins:jenkins /var/lib/jenkins/jobs/openrave_sample_app
+echo "configure github to hook http://JENKINS_ROOT/github-webhook/"
+  EOS
+end
