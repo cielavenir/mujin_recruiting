@@ -18,7 +18,7 @@ end
 end
 execute "add deb-multimedia source" do
   command <<-EOS
-if [[ `cat /etc/issue` = Debian* ]]; then
+if grep ^Debian /etc/issue >/dev/null; then
   apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5C808C2B65558117
   echo deb http://www.deb-multimedia.org jessie main non-free >>/etc/apt/sources.list
 fi
