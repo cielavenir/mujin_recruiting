@@ -15,8 +15,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.box_url = "https://atlas.hashicorp.com/ubuntu/boxes/xenial64"
   else
     # BOX name and url
-    config.vm.box = "ubuntu/jessie64"
-    config.vm.box_url = "https://atlas.hashicorp.com/ubuntu/boxes/jessie64"
+    config.vm.box = "debian/jessie64"
+    config.vm.box_url = "https://atlas.hashicorp.com/debian/boxes/jessie64"
   end
   # VM boot timeout
   config.vm.boot_timeout = 360
