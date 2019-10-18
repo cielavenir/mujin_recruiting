@@ -1,12 +1,12 @@
 #execute "add backports source" do
 #  command "echo deb http://ftp.debian.org/debian jessie-backports main >>/etc/apt/sources.list"
 #end
-#execute "add jenkins key" do
-#  command "wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | apt-key add -"
-#end
-#execute "add jenkins source" do
-#  command "echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list"
-#end
+execute "add jenkins key" do
+  command "wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | apt-key add -"
+end
+execute "add jenkins source" do
+  command "echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list"
+end
 execute "update apt package part1" do
   command "apt-get update -y"
 end
@@ -20,7 +20,7 @@ execute "add deb-multimedia source" do
   command <<-EOS
 if grep ^Debian /etc/issue >/dev/null; then
   apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5C808C2B65558117
-  echo deb http://www.deb-multimedia.org jessie main non-free >>/etc/apt/sources.list
+  echo deb http://www.deb-multimedia.org jessie main non-free > /etc/apt/sources.list.d/multimedia.list
 fi
   EOS
 end
@@ -30,12 +30,13 @@ end
 #execute "upgrade apt package" do
 #  command "apt-get upgrade -y"
 #end
-%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libbullet-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage cmake-curses-gui}.each do |each_package|
+%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libbullet-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage jenkins}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
   end
 end
+#some debug app
 %w{cmake-curses-gui silversearcher-ag}.each do |each_package|
   package each_package do
     action :install
@@ -44,7 +45,13 @@ end
 end
 execute "install sympy" do
   command <<-EOS
-pip install numpy==1.14.2 sympy==0.7.1 scipy==1.1.0 IPython==5.8.0
+pip install numpy==1.14.2 sympy==0.7.1 IPython==5.8.0
+  EOS
+end
+#must be different command
+execute "install scipy" do
+  command <<-EOS
+pip install scipy==1.1.0
   EOS
 end
 execute "install collada-dom" do
@@ -73,6 +80,7 @@ execute "install openrave" do
 git clone https://github.com/rdiankov/openrave.git
 cd openrave
 sed -i -e 's/+pmanager/pmanager/' plugins/fclrave/fclmanagercache.h
+sed -i '1i#define BOOST_SYSTEM_NO_DEPRECATED' src/boost_assertion_failed.cpp
 cmake .
 make -j4
 make install
@@ -86,7 +94,7 @@ cd openrave_sample_app
 #makemigrations is done in repo
 #python manage.py makemigrations openrave
 python manage.py migrate
-echo "ready for `python manage.py runserver 0.0.0.0:8000`."
+echo 'ready for `python manage.py runserver 0.0.0.0:8000`.'
 cd ..
   EOS
 end
