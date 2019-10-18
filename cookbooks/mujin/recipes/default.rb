@@ -30,7 +30,7 @@ end
 #execute "upgrade apt package" do
 #  command "apt-get upgrade -y"
 #end
-%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libbullet-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage jenkins}.each do |each_package|
+%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libbullet-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage openjdk-8-jre-headless jenkins}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
@@ -98,7 +98,6 @@ echo 'ready for `python manage.py runserver 0.0.0.0:8000`.'
 cd ..
   EOS
 end
-=begin
 execute "configure jenkins" do
   command <<-EOS
 mkdir /var/lib/jenkins/jobs/openrave_sample_app
@@ -107,4 +106,3 @@ chown -RH jenkins:jenkins /var/lib/jenkins/jobs/openrave_sample_app
 echo "configure github to hook http://JENKINS_ROOT/github-webhook/"
   EOS
 end
-=end
