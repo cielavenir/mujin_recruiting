@@ -18,8 +18,10 @@ end
 end
 execute "add deb-multimedia source" do
   command <<-EOS
-apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5C808C2B65558117
-echo deb http://www.deb-multimedia.org jessie main non-free >>/etc/apt/sources.list
+if [[ `cat /etc/issue` = Debian* ]]; then
+  apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5C808C2B65558117
+  echo deb http://www.deb-multimedia.org jessie main non-free >>/etc/apt/sources.list
+fi
   EOS
 end
 execute "update apt package part2" do
@@ -28,7 +30,7 @@ end
 #execute "upgrade apt package" do
 #  command "apt-get upgrade -y"
 #end
-%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcrecpp0 libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools  libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libbullet-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage cmake-curses-gui}.each do |each_package|
+%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libbullet-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage cmake-curses-gui}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
@@ -60,7 +62,7 @@ execute "install fcl" do
 git clone https://github.com/rdiankov/fcl.git
 cd fcl
 git checkout origin/kenjiSpeedUpAdditions
-cmake . FCL_BUILD_TESTS=OFF
+cmake . -DFCL_BUILD_TESTS=OFF
 make
 make install
 cd ..
