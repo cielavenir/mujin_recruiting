@@ -7,22 +7,42 @@
 #execute "add jenkins source" do
 #  command "echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list"
 #end
-execute "update apt package" do
+execute "update apt package part1" do
   command "apt-get update -y"
 end
-#execute "upgrade apt package" do
-#  command "apt-get upgrade -y"
-#end
-%w{g++ git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcrecpp0 libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools  libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libbullet-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-numpy python-scipy python-django python-pip python-beautifulsoup python-django-nose python-coverage jenkins}.each do |each_package|
+%w{dirmngr}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
   end
 end
-#python-sympy package has installing issue.
+execute "add deb-multimedia source" do
+  command <<-EOS
+apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5C808C2B65558117
+echo deb http://www.deb-multimedia.org jessie main non-free >>/etc/apt/sources.list
+  EOS
+end
+execute "update apt package part2" do
+  command "apt-get update -y"
+end
+#execute "upgrade apt package" do
+#  command "apt-get upgrade -y"
+#end
+%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcrecpp0 libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools  libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libbullet-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage cmake-curses-gui}.each do |each_package|
+  package each_package do
+    action :install
+    options "--force-yes"
+  end
+end
+%w{cmake-curses-gui silversearcher-ag}.each do |each_package|
+  package each_package do
+    action :install
+    options "--force-yes"
+  end
+end
 execute "install sympy" do
   command <<-EOS
-pip install sympy
+pip install numpy==1.14.2 sympy==0.7.1 scipy==1.1.0 IPython==5.8.0
   EOS
 end
 execute "install collada-dom" do
@@ -39,7 +59,8 @@ execute "install fcl" do
   command <<-EOS
 git clone https://github.com/rdiankov/fcl.git
 cd fcl
-cmake .
+git checkout origin/kenjiSpeedUpAdditions
+cmake . FCL_BUILD_TESTS=OFF
 make
 make install
 cd ..
@@ -49,6 +70,7 @@ execute "install openrave" do
   command <<-EOS
 git clone https://github.com/rdiankov/openrave.git
 cd openrave
+sed -i -e 's/+pmanager/pmanager/' plugins/fclrave/fclmanagercache.h
 cmake .
 make
 make install
@@ -66,6 +88,7 @@ echo "ready for `python manage.py runserver 0.0.0.0:8000`."
 cd ..
   EOS
 end
+=begin
 execute "configure jenkins" do
   command <<-EOS
 mkdir /var/lib/jenkins/jobs/openrave_sample_app
@@ -74,3 +97,4 @@ chown -RH jenkins:jenkins /var/lib/jenkins/jobs/openrave_sample_app
 echo "configure github to hook http://JENKINS_ROOT/github-webhook/"
   EOS
 end
+=end
