@@ -52,7 +52,7 @@ execute "install collada-dom" do
 git clone https://github.com/rdiankov/collada-dom.git
 cd collada-dom
 cmake .
-make
+make -j4
 make install
 cd ..
   EOS
@@ -63,7 +63,7 @@ git clone https://github.com/rdiankov/fcl.git
 cd fcl
 git checkout origin/kenjiSpeedUpAdditions
 cmake . -DFCL_BUILD_TESTS=OFF
-make
+make -j4
 make install
 cd ..
   EOS
@@ -74,7 +74,7 @@ git clone https://github.com/rdiankov/openrave.git
 cd openrave
 sed -i -e 's/+pmanager/pmanager/' plugins/fclrave/fclmanagercache.h
 cmake .
-make
+make -j4
 make install
 cd ..
   EOS
