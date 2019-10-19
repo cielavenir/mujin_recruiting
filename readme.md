@@ -1,5 +1,7 @@
 ## mujin\_recruiting
 
+My MUJIN entrance task to make a django app with test and make it jenkins-handleable.
+
 ```
 sudo dpkg -i vagrant.deb
 sudo gem install knife-solo -v 0.6.0
