@@ -1,6 +1,11 @@
-#execute "add backports source" do
-#  command "echo deb http://ftp.debian.org/debian jessie-backports main >>/etc/apt/sources.list"
-#end
+execute "add backports source" do
+  command <<-EOS
+if grep ^Debian /etc/issue >/dev/null; then
+  echo deb http://archive.debian.org/debian jessie-backports main > /etc/apt/sources.list.d/backports.list
+  echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/ignorevalid.conf
+fi
+  EOS
+end
 execute "add jenkins key" do
   command "wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | apt-key add -"
 end
@@ -19,6 +24,7 @@ end
 execute "add deb-multimedia source" do
   command <<-EOS
 if grep ^Debian /etc/issue >/dev/null; then
+  apt-get install -y ca-certificates-java/jessie-backports openjdk-8-jre-headless/jessie-backports
   apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5C808C2B65558117
   echo deb http://www.deb-multimedia.org jessie main non-free > /etc/apt/sources.list.d/multimedia.list
 fi
@@ -79,8 +85,8 @@ execute "install openrave" do
   command <<-EOS
 git clone https://github.com/rdiankov/openrave.git
 cd openrave
-sed -i -e 's/+pmanager/pmanager/' plugins/fclrave/fclmanagercache.h
-sed -i '1i#define BOOST_SYSTEM_NO_DEPRECATED' src/boost_assertion_failed.cpp
+sed -i -e 's/+pmanager/pmanager/' plugins/fclrave/fclmanagercache.h          # https://github.com/rdiankov/openrave/pull/703
+sed -i '1i#define BOOST_SYSTEM_NO_DEPRECATED' src/boost_assertion_failed.cpp # https://github.com/rdiankov/openrave/pull/704
 cmake .
 make -j4
 make install
