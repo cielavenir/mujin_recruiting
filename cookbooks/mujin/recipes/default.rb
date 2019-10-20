@@ -24,9 +24,11 @@ end
 execute "add deb-multimedia source" do
   command <<-EOS
 if grep ^Debian /etc/issue >/dev/null; then
-  apt-get install -y ca-certificates-java/jessie-backports openjdk-8-jre-headless/jessie-backports
+  apt-get install -y ca-certificates-java/jessie-backports openjdk-8-jre-headless/jessie-backports liblog4cxx10-dev
   apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5C808C2B65558117
   echo deb http://www.deb-multimedia.org jessie main non-free > /etc/apt/sources.list.d/multimedia.list
+else
+  apt-get install -y liblog4cxx-dev
 fi
   EOS
 end
@@ -70,6 +72,26 @@ make install
 cd ..
   EOS
 end
+execute "install RapidJSON" do
+  command <<-EOS
+git clone https://github.com/Tencent/rapidjson.git
+cd rapidjson
+cmake .
+make -j4
+make install
+cd ..
+  EOS
+end
+execute "install assimp" do
+  command <<-EOS
+git clone https://github.com/rdiankov/assimp.git
+cd assimp
+cmake .
+make -j4
+make install
+cd ..
+  EOS
+end
 execute "install fcl" do
   command <<-EOS
 git clone https://github.com/rdiankov/fcl.git
@@ -85,9 +107,28 @@ execute "install openrave" do
   command <<-EOS
 git clone https://github.com/rdiankov/openrave.git
 cd openrave
-sed -i -e 's/+pmanager/pmanager/' plugins/fclrave/fclmanagercache.h          # https://github.com/rdiankov/openrave/pull/703
-sed -i '1i#define BOOST_SYSTEM_NO_DEPRECATED' src/boost_assertion_failed.cpp # https://github.com/rdiankov/openrave/pull/704
-cmake .
+
+#openrave 0.15
+#git checkout 951676167e443eec6b40163d4f5b68d0858b74ef
+#sed -i -e 's/+pmanager/pmanager/' plugins/fclrave/fclmanagercache.h # https://github.com/rdiankov/openrave/pull/703
+#cmake .
+
+#openrave 0.24
+sed -i -e 's/pmeta->getName()/string(pmeta->getName())/' src/libopenrave-core/colladaparser/colladareader.cpp # https://github.com/rdiankov/openrave/pull/705
+cmake . -DCMAKE_CXX_FLAGS=-std=gnu++11 -DOPENRAVE_PLUGIN_BULLETRAVE=OFF # disable bulletrave until https://github.com/rdiankov/openrave/pull/706 is resolved
+if grep ^Debian /etc/issue >/dev/null; then
+  # workaround for broken libstdc++ 4.9 C++11 mode
+  # https://stackoverflow.com/a/33770530/2641271
+  cmathLineno=$(grep -n cmath plugins/ikfastsolvers/plugindefs.h|cut -d: -f1)
+  cat << EOM | sed -i "${cmathLineno}r /dev/stdin" plugins/ikfastsolvers/plugindefs.h
+#if __cplusplus <= 199711L  // c++98 or older
+#  define isnan(x) ::isnan(x)
+#else
+#  define isnan(x) std::isnan(x)
+#endif
+EOM
+fi
+
 make -j4
 make install
 cd ..
