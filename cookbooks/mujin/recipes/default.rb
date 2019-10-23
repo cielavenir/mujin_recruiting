@@ -67,7 +67,7 @@ execute "install bullet3 (2.82)" do
 git clone https://github.com/bulletphysics/bullet3.git && mkdir bullet3/build
 cd bullet3/build
 git checkout tags/2.82
-cmake .. -GNinja -DINSTALL_LIBS=ON -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC
+cmake .. -GNinja -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC
 ninja -j4 && ninja install
 cd ../..
   EOS
