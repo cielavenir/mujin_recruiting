@@ -103,15 +103,20 @@ execute "install openrave" do
   command <<-EOS
 git clone https://github.com/rdiankov/openrave.git && mkdir openrave/build
 cd openrave/build
+git remote add ciel https://github.com/cielavenir/openrave.git
+git fetch ciel # for some special path commit
 
 #openrave 0.15
-#git checkout 951676167e443eec6b40163d4f5b68d0858b74ef
-#sed -i -e 's/+pmanager/pmanager/' ../plugins/fclrave/fclmanagercache.h # https://github.com/rdiankov/openrave/pull/703
+#git checkout 951676167e443eec6b40163d4f5b68d0858b74ef # the final version with rapidjson optional
+#git cherry-pick addfd9e8baac327d86245515c6d4595a4f05aa59 # https://github.com/rdiankov/openrave/pull/703 (fix fclmanagercache.h)
 #cmake ..
 
 #openrave 0.24
-sed -i -e 's/pmeta->getName()/string(pmeta->getName())/' ../src/libopenrave-core/colladaparser/colladareader.cpp # https://github.com/rdiankov/openrave/pull/705
-cmake .. -GNinja -DCMAKE_CXX_FLAGS=-std=gnu++11 -DOPENRAVE_PLUGIN_BULLETRAVE=OFF # disable bulletrave until https://github.com/rdiankov/openrave/pull/706 is resolved
+git checkout origin/master # detach HEAD
+git cherry-pick abb574aab3c60a8241e0ef589612824f7d268fb8 # https://github.com/rdiankov/openrave/pull/705 (fix colladareader wrong optimization)
+git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
+git cherry-pick 40d1e31e431523bfd1ec2c0a7c351a008ca93f91 # https://github.com/rdiankov/openrave/pull/708 (fix FCL_LDFLAGS)
+cmake .. -GNinja -DCMAKE_CXX_FLAGS=-std=gnu++11
 if grep ^Debian /etc/issue >/dev/null; then
   # workaround for broken libstdc++ 4.9 C++11 mode
   # https://stackoverflow.com/a/33770530/2641271
