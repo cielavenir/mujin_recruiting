@@ -38,7 +38,7 @@ end
 #execute "upgrade apt package" do
 #  command "apt-get upgrade -y"
 #end
-%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libbullet-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
+%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
@@ -60,6 +60,16 @@ end
 execute "install scipy" do
   command <<-EOS
 pip install scipy==1.1.0
+  EOS
+end
+execute "install bullet3 (2.82)" do
+  command <<-EOS
+git clone https://github.com/bulletphysics/bullet3.git && mkdir bullet3/build
+cd bullet3/build
+git checkout tags/2.82
+cmake .. -GNinja -DINSTALL_LIBS=ON
+ninja -j4 && ninja install
+cd ../..
   EOS
 end
 execute "install collada-dom" do
