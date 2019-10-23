@@ -38,14 +38,14 @@ end
 #execute "upgrade apt package" do
 #  command "apt-get upgrade -y"
 #end
-%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libbullet-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage openjdk-8-jre-headless jenkins}.each do |each_package|
+%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libassimp-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libbullet-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
   end
 end
 #some debug app
-%w{cmake-curses-gui silversearcher-ag}.each do |each_package|
+%w{ninja-build cmake-curses-gui silversearcher-ag}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
@@ -64,63 +64,59 @@ pip install scipy==1.1.0
 end
 execute "install collada-dom" do
   command <<-EOS
-git clone https://github.com/rdiankov/collada-dom.git
-cd collada-dom
-cmake .
-make -j4
-make install
-cd ..
+git clone https://github.com/rdiankov/collada-dom.git && mkdir collada-dom/build
+cd collada-dom/build
+cmake .. -GNinja
+ninja -j4 && ninja install
+cd ../..
   EOS
 end
 execute "install RapidJSON" do
   command <<-EOS
-git clone https://github.com/Tencent/rapidjson.git
-cd rapidjson
-cmake .
-make -j4
-make install
-cd ..
+git clone https://github.com/Tencent/rapidjson.git && mkdir rapidjson/build
+cd rapidjson/build
+cmake .. -GNinja
+ninja -j4 && ninja install
+cd ../..
   EOS
 end
 execute "install assimp" do
   command <<-EOS
-git clone https://github.com/rdiankov/assimp.git
-cd assimp
-cmake .
-make -j4
-make install
-cd ..
+git clone https://github.com/rdiankov/assimp.git && mkdir assimp/build
+cd assimp/build
+cmake .. -GNinja
+ninja -j4 && ninja install
+cd ../..
   EOS
 end
 execute "install fcl" do
   command <<-EOS
-git clone https://github.com/rdiankov/fcl.git
-cd fcl
+git clone https://github.com/rdiankov/fcl.git && mkdir fcl/build
+cd fcl/build
 git checkout origin/kenjiSpeedUpAdditions
-cmake . -DFCL_BUILD_TESTS=OFF
-make -j4
-make install
-cd ..
+cmake .. -GNinja -DFCL_BUILD_TESTS=OFF
+ninja -j4 && ninja install
+cd ../..
   EOS
 end
 execute "install openrave" do
   command <<-EOS
-git clone https://github.com/rdiankov/openrave.git
-cd openrave
+git clone https://github.com/rdiankov/openrave.git && mkdir openrave/build
+cd openrave/build
 
 #openrave 0.15
 #git checkout 951676167e443eec6b40163d4f5b68d0858b74ef
-#sed -i -e 's/+pmanager/pmanager/' plugins/fclrave/fclmanagercache.h # https://github.com/rdiankov/openrave/pull/703
-#cmake .
+#sed -i -e 's/+pmanager/pmanager/' ../plugins/fclrave/fclmanagercache.h # https://github.com/rdiankov/openrave/pull/703
+#cmake ..
 
 #openrave 0.24
-sed -i -e 's/pmeta->getName()/string(pmeta->getName())/' src/libopenrave-core/colladaparser/colladareader.cpp # https://github.com/rdiankov/openrave/pull/705
-cmake . -DCMAKE_CXX_FLAGS=-std=gnu++11 -DOPENRAVE_PLUGIN_BULLETRAVE=OFF # disable bulletrave until https://github.com/rdiankov/openrave/pull/706 is resolved
+sed -i -e 's/pmeta->getName()/string(pmeta->getName())/' ../src/libopenrave-core/colladaparser/colladareader.cpp # https://github.com/rdiankov/openrave/pull/705
+cmake .. -GNinja -DCMAKE_CXX_FLAGS=-std=gnu++11 -DOPENRAVE_PLUGIN_BULLETRAVE=OFF # disable bulletrave until https://github.com/rdiankov/openrave/pull/706 is resolved
 if grep ^Debian /etc/issue >/dev/null; then
   # workaround for broken libstdc++ 4.9 C++11 mode
   # https://stackoverflow.com/a/33770530/2641271
-  cmathLineno=$(grep -n cmath plugins/ikfastsolvers/plugindefs.h|cut -d: -f1)
-  cat << EOM | sed -i "${cmathLineno}r /dev/stdin" plugins/ikfastsolvers/plugindefs.h
+  cmathLineno=$(grep -n cmath ../plugins/ikfastsolvers/plugindefs.h|cut -d: -f1)
+  cat << EOM | sed -i "${cmathLineno}r /dev/stdin" ../plugins/ikfastsolvers/plugindefs.h
 #if __cplusplus <= 199711L  // c++98 or older
 #  define isnan(x) ::isnan(x)
 #else
@@ -129,9 +125,8 @@ if grep ^Debian /etc/issue >/dev/null; then
 EOM
 fi
 
-make -j4
-make install
-cd ..
+ninja -j4 && ninja install
+cd ../..
   EOS
 end
 execute "install openrave_sample_app" do
