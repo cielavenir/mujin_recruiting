@@ -7,7 +7,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider :virtualbox do |vb|
     # VirtualBox VM name
     vb.name = "mujin"
-    vb.customize ["modifyvm", :id, "--memory", "4096", "--cpus", "4"]
+    vb.customize ["modifyvm", :id, "--memory", "5120", "--cpus", "4"]
   end
   if ENV['MUJIN_RECRUITING_UBUNTU'] && ENV['MUJIN_RECRUITING_UBUNTU']!='' && ENV['MUJIN_RECRUITING_UBUNTU']!='0'
     # BOX name and url
