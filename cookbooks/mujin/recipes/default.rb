@@ -123,11 +123,12 @@ git config --local user.name 'knife-solo'
 #git cherry-pick addfd9e8baac327d86245515c6d4595a4f05aa59 # https://github.com/rdiankov/openrave/pull/703 (fix fclmanagercache.h)
 #cmake ..
 
-#openrave 0.24
+#openrave 0.25
 git checkout origin/master # detach HEAD
-git cherry-pick abb574aab3c60a8241e0ef589612824f7d268fb8 # https://github.com/rdiankov/openrave/pull/705 (fix colladareader wrong optimization)
 git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
+git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick 40d1e31e431523bfd1ec2c0a7c351a008ca93f91 # https://github.com/rdiankov/openrave/pull/708 (fix FCL_LDFLAGS)
+git cherry-pick 18831785c536f801f1af66fffff7eb7bec60d8e8
 cmake .. -GNinja -DCMAKE_CXX_FLAGS=-std=gnu++11
 if grep ^Debian /etc/issue >/dev/null; then
   # workaround for broken libstdc++ 4.9 C++11 mode
