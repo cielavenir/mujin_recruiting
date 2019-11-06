@@ -1,6 +1,6 @@
 execute "add backports source" do
   command <<-EOS
-if grep ^Debian /etc/issue >/dev/null; then
+if grep '^Debian GNU/Linux 8' /etc/issue >/dev/null; then
   echo deb http://archive.debian.org/debian jessie-backports main > /etc/apt/sources.list.d/backports.list
   echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/ignorevalid.conf
 fi
@@ -23,7 +23,7 @@ end
 end
 execute "add deb-multimedia source" do
   command <<-EOS
-if grep ^Debian /etc/issue >/dev/null; then
+if grep '^Debian GNU/Linux 8' /etc/issue >/dev/null; then
   apt-get install -y ca-certificates-java/jessie-backports openjdk-8-jre-headless/jessie-backports liblog4cxx10-dev
   apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5C808C2B65558117
   echo deb http://www.deb-multimedia.org jessie main non-free > /etc/apt/sources.list.d/multimedia.list
@@ -38,7 +38,7 @@ end
 #execute "upgrade apt package" do
 #  command "apt-get upgrade -y"
 #end
-%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev liboctomap-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
+%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
@@ -130,7 +130,7 @@ git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick 40d1e31e431523bfd1ec2c0a7c351a008ca93f91 # https://github.com/rdiankov/openrave/pull/708 (fix FCL_LDFLAGS)
 git cherry-pick 18831785c536f801f1af66fffff7eb7bec60d8e8
 cmake .. -GNinja -DCMAKE_CXX_FLAGS=-std=gnu++11
-if grep ^Debian /etc/issue >/dev/null; then
+if grep '^Debian GNU/Linux 8' /etc/issue >/dev/null; then
   # workaround for broken libstdc++ 4.9 C++11 mode
   # https://stackoverflow.com/a/33770530/2641271
   cmathLineno=$(grep -n cmath ../plugins/ikfastsolvers/plugindefs.h|cut -d: -f1)
