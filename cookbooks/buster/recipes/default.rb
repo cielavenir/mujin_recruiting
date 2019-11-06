@@ -42,10 +42,11 @@ execute "install specific lib" do
   command <<-EOS
 if grep '^Debian GNU/Linux' /etc/issue >/dev/null && [ ! -d soqt ]; then
   mkdir soqt
-  git -C /vagrant show soqt_buster:soqt.tar | tar -C soqt -x
+  git -C /vagrant show origin/soqt_buster:soqt.tar | tar -C soqt -x
   cd soqt
   dpkg -i libcoin80-dev_3.1.4~abc9f50+dfsg1-2_amd64.deb libcoin80-runtime_3.1.4~abc9f50+dfsg1-2_all.deb libcoin80v5_3.1.4~abc9f50+dfsg1-2_amd64.deb libsoqt-dev-common_1.6.0~e8310f-3_amd64.deb libsoqt4-20_1.6.0~e8310f-3_amd64.deb libsoqt4-dev_1.6.0~e8310f-3_amd64.deb
   cd ..
+  apt-get -y install -f
 fi
   EOS
 end
