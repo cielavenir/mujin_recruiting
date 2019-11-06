@@ -1,11 +1,3 @@
-execute "add backports source" do
-  command <<-EOS
-if grep '^Debian GNU/Linux 8' /etc/issue >/dev/null; then
-  echo deb http://archive.debian.org/debian jessie-backports main > /etc/apt/sources.list.d/backports.list
-  echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/ignorevalid.conf
-fi
-  EOS
-end
 execute "update apt package part1" do
   command "apt-get update -y"
 end
@@ -21,29 +13,49 @@ end
 execute "add jenkins source" do
   command "echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list"
 end
-execute "add deb-multimedia source" do
-  command <<-EOS
-if grep '^Debian GNU/Linux 8' /etc/issue >/dev/null; then
-  apt-get install -y ca-certificates-java/jessie-backports openjdk-8-jre-headless/jessie-backports liblog4cxx10-dev
-  apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5C808C2B65558117
-  echo deb http://www.deb-multimedia.org jessie main non-free > /etc/apt/sources.list.d/multimedia.list
-else
-  apt-get install -y liblog4cxx-dev
-fi
-  EOS
-end
 execute "update apt package part2" do
   command "apt-get update -y"
 end
-#execute "upgrade apt package" do
-#  command "apt-get upgrade -y"
-#end
-%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
+execute "install specific lib" do
+  command <<-EOS
+if grep '^Debian GNU/Linux' /etc/issue >/dev/null; then
+  apt-get install -y openjdk-11-jre-headless
+else
+  apt-get install -y openjdk-8-jre-headless libsoqt4-dev
+fi
+  EOS
+end
+%w{liblog4cxx-dev libboost-numpy-dev}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
   end
 end
+%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev}.each do |each_package|
+  package each_package do
+    action :install
+    options "--force-yes"
+  end
+end
+### sorry, need to downgrade soqt on buster ###
+execute "install specific lib" do
+  command <<-EOS
+if grep '^Debian GNU/Linux' /etc/issue >/dev/null && [ ! -d soqt ]; then
+  mkdir soqt
+  git -C /vagrant show soqt_buster:soqt.tar | tar -C soqt -x
+  cd soqt
+  dpkg -i libcoin80-dev_3.1.4~abc9f50+dfsg1-2_amd64.deb libcoin80-runtime_3.1.4~abc9f50+dfsg1-2_all.deb libcoin80v5_3.1.4~abc9f50+dfsg1-2_amd64.deb libsoqt-dev-common_1.6.0~e8310f-3_amd64.deb libsoqt4-20_1.6.0~e8310f-3_amd64.deb libsoqt4-dev_1.6.0~e8310f-3_amd64.deb
+  cd ..
+fi
+  EOS
+end
+%w{libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libqhull-dev libann-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev python-dev python-django python-pip python-django-nose python-coverage python-opengl jenkins}.each do |each_package|
+  package each_package do
+    action :install
+    options "--force-yes"
+  end
+end
+#python-beautifulsoup
 #some debug app
 %w{ninja-build cmake-curses-gui silversearcher-ag}.each do |each_package|
   package each_package do
@@ -53,7 +65,7 @@ end
 end
 execute "install sympy" do
   command <<-EOS
-pip install numpy==1.14.2 sympy==0.7.1 IPython==5.8.0
+pip install numpy==1.16.5 sympy==0.7.1 IPython==5.8.0
   EOS
 end
 #must be different command
@@ -62,6 +74,7 @@ execute "install scipy" do
 pip install scipy==1.1.0
   EOS
 end
+=begin
 execute "install bullet3 (2.82)" do
   command <<-EOS
 git clone https://github.com/bulletphysics/bullet3.git && mkdir bullet3/build
@@ -72,6 +85,7 @@ ninja -j4 && ninja install
 cd ../..
   EOS
 end
+=end
 execute "install collada-dom" do
   command <<-EOS
 git clone https://github.com/rdiankov/collada-dom.git && mkdir collada-dom/build
@@ -115,38 +129,16 @@ git clone https://github.com/rdiankov/openrave.git && mkdir openrave/build
 cd openrave/build
 git remote add ciel https://github.com/cielavenir/openrave.git
 git fetch ciel # for some special patch commit
-git config --local user.email 'knife-solo@vagrant.example.com'
-git config --local user.name 'knife-solo'
+#git config --local user.email 'knife-solo@vagrant.example.com'
+#git config --local user.name 'knife-solo'
+git checkout ciel/boost-1.6x
 
-#openrave 0.15
-#git checkout 951676167e443eec6b40163d4f5b68d0858b74ef # the final version with rapidjson optional
-#git cherry-pick addfd9e8baac327d86245515c6d4595a4f05aa59 # https://github.com/rdiankov/openrave/pull/703 (fix fclmanagercache.h)
-#cmake ..
-
-#openrave 0.25
-git checkout origin/master # detach HEAD
-git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
-git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
-git cherry-pick 40d1e31e431523bfd1ec2c0a7c351a008ca93f91 # https://github.com/rdiankov/openrave/pull/708 (fix FCL_LDFLAGS)
-git cherry-pick 18831785c536f801f1af66fffff7eb7bec60d8e8
-cmake .. -GNinja -DCMAKE_CXX_FLAGS=-std=gnu++11
-if grep '^Debian GNU/Linux 8' /etc/issue >/dev/null; then
-  # workaround for broken libstdc++ 4.9 C++11 mode
-  # https://stackoverflow.com/a/33770530/2641271
-  cmathLineno=$(grep -n cmath ../plugins/ikfastsolvers/plugindefs.h|cut -d: -f1)
-  cat << EOM | sed -i "${cmathLineno}r /dev/stdin" ../plugins/ikfastsolvers/plugindefs.h
-#if __cplusplus <= 199711L  // c++98 or older
-#  define isnan(x) ::isnan(x)
-#else
-#  define isnan(x) std::isnan(x)
-#endif
-EOM
-fi
-
+cmake .. -GNinja -DCMAKE_CXX_FLAGS=-std=gnu++11 -DOPENRAVE_PLUGIN_BULLETRAVE=OFF -DOPENRAVE_PLUGIN_LOGGING=OFF
 ninja -j4 && ninja install
 cd ../..
   EOS
 end
+=begin
 execute "install openrave_sample_app" do
   command <<-EOS
 git clone https://github.com/cielavenir/openrave_sample_app.git
@@ -166,3 +158,4 @@ chown -RH jenkins:jenkins /var/lib/jenkins/jobs/openrave_sample_app
 echo "configure github to hook http://JENKINS_ROOT/github-webhook/"
   EOS
 end
+=end
