@@ -14,7 +14,8 @@ MUJIN_RECRUITING=jessie vagrant up
 - knife-solo 0.6.0 has some issues with stretch guest. You can launch knifesolo\_stretchenabler.rb (only once!) to patch knife-solo for workaround.
 
 - The django app does not support buster/bionic.
-- buster edition installs patched version of openrave. The support is very limited.
+- buster edition installs patched version of openrave. The support is very limited. bulletrave and videorecorder are disabled.
+- (Ubuntu bionic is not affected but) Debian buster needs to **downgrade libcoin and libsoqt4 to stretch's**. The process is automated using my prebuilt package using apt-src, but might cause some incompatibilities.
 
 |Debian/Ubuntu (MUJIN\_RECRUITING= value)|provisioning|
 |:--|:--|
