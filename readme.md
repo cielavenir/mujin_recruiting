@@ -25,5 +25,5 @@ MUJIN_RECRUITING=jessie vagrant up
 |stretch|./vagrant.sh with stretchenabler|
 |buster|./vagrant\_buster.sh with stretchenabler|
 |xenial|./vagrant.sh|
-|bionic|./vagrant\_buster.sh with stretchenabler|
+|bionic|./vagrant\_buster.sh|
 
