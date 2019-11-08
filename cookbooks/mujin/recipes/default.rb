@@ -32,13 +32,20 @@ else
 fi
   EOS
 end
+execute "install libopenscenegraph-3.4-dev (if stretch)" do
+  command <<-EOS
+if grep '^Debian GNU/Linux 9' /etc/issue >/dev/null; then
+  apt-get install -y libopenscenegraph-3.4-dev
+fi
+  EOS
+end
 execute "update apt package part2" do
   command "apt-get update -y"
 end
 #execute "upgrade apt package" do
 #  command "apt-get upgrade -y"
 #end
-%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
+%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libsoqt4-dev libqhull-dev libann-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev python-dev python-django python-pip python-beautifulsoup python-django-nose python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"

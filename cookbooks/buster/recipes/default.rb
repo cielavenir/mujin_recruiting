@@ -25,7 +25,7 @@ else
 fi
   EOS
 end
-%w{liblog4cxx-dev libboost-numpy-dev}.each do |each_package|
+%w{liblog4cxx-dev libboost-numpy-dev libopenscenegraph-3.4-dev}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
@@ -37,8 +37,8 @@ end
     options "--force-yes"
   end
 end
-### sorry, need to downgrade soqt on buster ###
-execute "install specific lib" do
+### sorry, need to downgrade coin/soqt on buster ###
+execute "downgrade coin/soqt (debian buster)" do
   command <<-EOS
 if grep '^Debian GNU/Linux' /etc/issue >/dev/null && [ ! -d soqt ]; then
   mkdir soqt
@@ -50,7 +50,7 @@ if grep '^Debian GNU/Linux' /etc/issue >/dev/null && [ ! -d soqt ]; then
 fi
   EOS
 end
-%w{libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libqhull-dev libann-dev libopenscenegraph-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev python-dev python-django python-pip python-django-nose python-coverage python-opengl jenkins}.each do |each_package|
+%w{libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libqhull-dev libann-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev python-dev python-django python-pip python-django-nose python-coverage python-opengl jenkins}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
