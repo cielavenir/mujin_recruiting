@@ -25,7 +25,8 @@ else
 fi
   EOS
 end
-%w{liblog4cxx-dev libboost-numpy-dev libopenscenegraph-3.4-dev qtbase5-dev}.each do |each_package|
+%w{liblog4cxx-dev libboost-numpy-dev libopenscenegraph-dev}.each do |each_package|
+  # libopenscenegraph-3.4-dev (and qtbase5-dev) are not compatible with boost-1.6x branchi, which targets to Qt4 OSG!
   package each_package do
     action :install
     options "--force-yes"
@@ -132,7 +133,7 @@ git remote add ciel https://github.com/cielavenir/openrave.git
 git fetch ciel # for some special patch commit
 #git config --local user.email 'knife-solo@vagrant.example.com'
 #git config --local user.name 'knife-solo'
-git checkout ciel/boost-1.6x
+git checkout ciel/boost-1.6x-forcompile
 
 cmake .. -GNinja -DCMAKE_CXX_FLAGS=-std=gnu++11 -DOPENRAVE_PLUGIN_BULLETRAVE=OFF -DOPENRAVE_PLUGIN_LOGGING=OFF
 ninja -j4 && ninja install
