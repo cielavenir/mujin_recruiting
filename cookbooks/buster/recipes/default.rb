@@ -25,7 +25,7 @@ else
 fi
   EOS
 end
-%w{liblog4cxx-dev libboost-numpy-dev libopenscenegraph-3.4-dev}.each do |each_package|
+%w{liblog4cxx-dev libboost-numpy-dev libopenscenegraph-3.4-dev qtbase5-dev}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"

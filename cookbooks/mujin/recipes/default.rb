@@ -35,7 +35,7 @@ end
 execute "install libopenscenegraph-3.4-dev (if stretch)" do
   command <<-EOS
 if grep '^Debian GNU/Linux 9' /etc/issue >/dev/null; then
-  apt-get install -y libopenscenegraph-3.4-dev
+  apt-get install -y libopenscenegraph-3.4-dev qtbase5-dev
 fi
   EOS
 end
