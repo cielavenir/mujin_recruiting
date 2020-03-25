@@ -11,14 +11,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #config.vm.box = "ubuntu/focal64"
     #config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/focal64"
   elsif ENV['MUJIN_RECRUITING']=='bionic'
-    vmname = 'buster'
+    #vmname = 'buster'
     config.vm.box = "ubuntu/bionic64"
     config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/bionic64"
   elsif ENV['MUJIN_RECRUITING']=='xenial'
     config.vm.box = "ubuntu/xenial64"
     config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/xenial64"
   elsif ENV['MUJIN_RECRUITING']=='buster'
-    vmname = 'buster'
+    #vmname = 'buster'
     config.vm.box = "debian/buster64"
     config.vm.box_url = "https://app.vagrantup.com/debian/boxes/buster64"
   elsif ENV['MUJIN_RECRUITING']=='stretch'
