@@ -132,6 +132,7 @@ git config --local user.name 'knife-solo'
 
 #openrave 0.25
 git checkout origin/master # detach HEAD
+#git checkout 2656da7b573004e3e12109b9831797a758a86981 # if master is advanced
 git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick 40d1e31e431523bfd1ec2c0a7c351a008ca93f91 # https://github.com/rdiankov/openrave/pull/708 (fix FCL_LDFLAGS)
