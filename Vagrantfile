@@ -8,8 +8,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # BOX name and url
   if ENV['MUJIN_RECRUITING']=='focal'
     #vmname = 'buster'
-    #config.vm.box = "ubuntu/focal64"
-    #config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/focal64"
+    config.vm.box = "ubuntu/focal64"
+    config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/focal64"
   elsif ENV['MUJIN_RECRUITING']=='bionic'
     #vmname = 'buster'
     config.vm.box = "ubuntu/bionic64"
