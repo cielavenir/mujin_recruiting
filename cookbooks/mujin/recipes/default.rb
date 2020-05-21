@@ -8,10 +8,10 @@ end
   end
 end
 execute "add jenkins key" do
-  command "wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | apt-key add -"
+  command "wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -"
 end
 execute "add jenkins source" do
-  command "echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list"
+  command "echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list"
 end
 execute "install libopenscenegraph" do
   command <<-EOS
