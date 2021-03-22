@@ -17,6 +17,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   elsif ENV['MUJIN_RECRUITING']=='xenial'
     config.vm.box = "ubuntu/xenial64"
     config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/xenial64"
+  elsif ENV['MUJIN_RECRUITING']=='bullseye'
+    #vmname = 'buster'
+    config.vm.box = "debian/bullseye64"
+    config.vm.box_url = "https://app.vagrantup.com/debian/boxes/bullseye64"
   elsif ENV['MUJIN_RECRUITING']=='buster'
     #vmname = 'buster'
     config.vm.box = "debian/buster64"
