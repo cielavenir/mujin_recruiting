@@ -1,7 +1,7 @@
 execute "update apt package part1" do
   command "apt-get update -y"
 end
-%w{dirmngr gnupg}.each do |each_package|
+%w{dirmngr gnupg apt-transport-https}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
@@ -16,7 +16,7 @@ end
 execute "install libopenscenegraph" do
   command <<-EOS
 apt-get install -y liblog4cxx-dev
-if grep '^Ubuntu F' /etc/issue >/dev/null; then
+if grep '^Ubuntu F' /etc/issue >/dev/null || grep '^Ubuntu 20' /etc/issue >/dev/null; then
   apt-get install -y libopenscenegraph-dev python2-dev python-setuptools
   python2 -m easy_install pip
 else
