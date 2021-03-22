@@ -107,12 +107,16 @@ git clone https://github.com/pybind/pybind11.git && mkdir pybind11/build
 cd pybind11/build
 git remote add woody https://github.com/woodychow/pybind11.git
 git fetch woody
+git remote add ciel https://github.com/cielavenir/pybind11.git
+git fetch ciel
 git config --local user.email 'knife-solo@vagrant.example.com'
 git config --local user.name 'knife-solo'
 
 git checkout v2.2.4
-git cherry-pick 94824d68a037d99253b92a5b260bb04907c42355
-git cherry-pick 98c9f77e5481af4cbc7eb092e1866151461e3508
+git cherry-pick 94824d68a037d99253b92a5b260bb04907c42355 # dict_get
+git cherry-pick 98c9f77e5481af4cbc7eb092e1866151461e3508 # item_accessor_T
+git cherry-pick dae2d434bd806eac67e38f3c49cfc91f46e4fd88 # fix_enum_str
+git cherry-pick 2e08ce9ba75f5a2d87a6f12e6ab657ac78444e8e # enumValues
 cmake .. -GNinja -DPYBIND11_TEST=OFF -DPythonLibsNew_FIND_VERSION=2
 ninja -j4 && ninja install
 cd ../..
