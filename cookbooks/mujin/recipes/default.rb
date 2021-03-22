@@ -18,7 +18,7 @@ execute "install libopenscenegraph" do
 apt-get install -y liblog4cxx-dev
 if grep '^Ubuntu F' /etc/issue >/dev/null || grep '^Ubuntu 20' /etc/issue >/dev/null; then
   apt-get install -y libopenscenegraph-dev python2-dev python-setuptools
-  python2 -m easy_install pip
+  python2 -m easy_install pip~=20.0
 else
   apt-get install -y libopenscenegraph-3.4-dev python-dev python-django python-beautifulsoup python-django-nose python-pip
 fi
