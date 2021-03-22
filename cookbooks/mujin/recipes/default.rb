@@ -134,10 +134,10 @@ git config --local user.name 'knife-solo'
 git checkout origin/production # detach HEAD
 git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
-git cherry-pick 40d1e31e431523bfd1ec2c0a7c351a008ca93f91 # https://github.com/rdiankov/openrave/pull/708 (fix FCL_LDFLAGS)
-git cherry-pick 18831785c536f801f1af66fffff7eb7bec60d8e8
+git cherry-pick ae571463e19c80756dcd8abbc8ba3279dea64aa9 # https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
 git cherry-pick 03d085f51e3db5b94a1049f09fdfd0c0a981fb42 # force PythonInterp to 2
-git cherry-pick 1ce99a010ccca567e798d6364c367cbff447984a # not requiring Boost::Python if pybind11 is used
+
+git cherry-pick f1758b2f47b4523db80679ca057cf5ad6eb50fb9
 
 # https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake
 cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DCMAKE_CXX_FLAGS=-std=gnu++11 -DBoost_NO_BOOST_CMAKE=1
