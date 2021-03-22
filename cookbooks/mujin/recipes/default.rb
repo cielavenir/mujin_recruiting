@@ -16,7 +16,7 @@ end
 execute "install libopenscenegraph" do
   command <<-EOS
 apt-get install -y liblog4cxx-dev
-if grep '^Ubuntu F' /etc/issue >/dev/null || grep '^Ubuntu 20' /etc/issue >/dev/null|| grep '^Debian GNU/Linux 11' /etc/issue >/dev/null; then
+if grep '^Ubuntu F' /etc/issue >/dev/null || grep '^Ubuntu 20' /etc/issue >/dev/null|| grep '^Debian GNU/Linux 11' /etc/issue >/dev/null || grep '^Debian GNU/Linux bullseye' /etc/issue >/dev/null; then
   apt-get install -y libopenscenegraph-dev python2-dev python-setuptools
   python2 -m easy_install pip~=20.0
 else
@@ -36,6 +36,12 @@ end
     options "--force-yes"
   end
 end
+=begin
+[bullseye]
+java needs to be openjdk-11-jre-headless.
+opengl needs to be https://pypi.org/project/PyOpenGL/ whl.
+=end
+
 #some debug app
 %w{ninja-build cmake-curses-gui silversearcher-ag}.each do |each_package|
   package each_package do

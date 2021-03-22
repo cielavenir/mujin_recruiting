@@ -20,6 +20,7 @@ MUJIN_RECRUITING=stretch vagrant up
 |:--|:--|
 |stretch|./vagrant.sh with stretchenabler|
 |buster|./vagrant.sh with stretchenabler|
+|bullseye|./vagrant.sh with stretchenabler|
 |xenial|./vagrant.sh|
 |bionic|./vagrant.sh|
 |focal|./vagrant.sh|
