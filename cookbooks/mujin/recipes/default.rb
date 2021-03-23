@@ -1,7 +1,7 @@
 execute "update apt package part1" do
   command "apt-get update -y"
 end
-%w{dirmngr gnupg apt-transport-https}.each do |each_package|
+%w{dirmngr gnupg apt-transport-https liblog4cxx-dev}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
@@ -13,16 +13,27 @@ end
 execute "add jenkins source" do
   command "echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list"
 end
-execute "install libopenscenegraph" do
-  command <<-EOS
-apt-get install -y liblog4cxx-dev
-if grep '^Ubuntu F' /etc/issue >/dev/null || grep '^Ubuntu 20' /etc/issue >/dev/null|| grep '^Debian GNU/Linux 11' /etc/issue >/dev/null || grep '^Debian GNU/Linux bullseye' /etc/issue >/dev/null; then
-  apt-get install -y libopenscenegraph-dev python2-dev python-setuptools
-  python2 -m easy_install pip~=20.0
+if (node[:platform]=='ubuntu'&&node[:platform_version]=='20.04') ||
+   (node[:platform]=='debian'&&node[:platform_version].to_i==11) ||
+   (node[:platform]=='debian'&&node[:platform_version].start_with?('bullseye'))
+  %w{libopenscenegraph-dev python2-dev python-setuptools}.each do |each_package|
+    package each_package do
+      action :install
+      options "--force-yes"
+    end
+  end
+  execute "install pip" do
+    command <<-EOS
+python2 -m easy_install pip~=20.0
+    EOS
+  end
 else
-  apt-get install -y libopenscenegraph-3.4-dev python-dev python-django python-beautifulsoup python-django-nose python-pip
-fi
-  EOS
+  %w{libopenscenegraph-3.4-dev python-dev python-django python-beautifulsoup python-django-nose python-pip}.each do |each_package|
+    package each_package do
+      action :install
+      options "--force-yes"
+    end
+  end
 end
 execute "update apt package part2" do
   command "apt-get update -y"
@@ -30,17 +41,33 @@ end
 #execute "upgrade apt package" do
 #  command "apt-get upgrade -y"
 #end
-%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev qtbase5-dev libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libqhull-dev libann-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
+%w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev qtbase5-dev libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libqhull-dev libann-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes"
   end
 end
-=begin
-[bullseye]
-java needs to be openjdk-11-jre-headless.
-opengl needs to be https://pypi.org/project/PyOpenGL/ whl.
-=end
+if (node[:platform]=='debian'&&node[:platform_version].to_i==11) ||
+   (node[:platform]=='debian'&&node[:platform_version].start_with?('bullseye'))
+  %w{openjdk-11-jre-headless jenkins}.each do |each_package|
+    package each_package do
+      action :install
+      options "--force-yes"
+    end
+  end
+  execute "install pyopengl" do
+    command <<-EOS
+python2 -m pip install pyopengl
+    EOS
+  end
+else
+  %w{python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
+    package each_package do
+      action :install
+      options "--force-yes"
+    end
+  end
+end
 
 #some debug app
 %w{ninja-build cmake-curses-gui silversearcher-ag}.each do |each_package|
@@ -51,13 +78,13 @@ opengl needs to be https://pypi.org/project/PyOpenGL/ whl.
 end
 execute "install sympy" do
   command <<-EOS
-pip install numpy==1.14.2 sympy==0.7.1 IPython==5.8.0
+python2 -m pip install numpy==1.14.2 sympy==0.7.1 IPython==5.8.0
   EOS
 end
 #must be different command
 execute "install scipy" do
   command <<-EOS
-pip install scipy==1.1.0
+python2 -m pip install scipy==1.1.0
   EOS
 end
 execute "install bullet3 (2.82)" do
@@ -143,7 +170,7 @@ git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick ae571463e19c80756dcd8abbc8ba3279dea64aa9 # https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
 git cherry-pick 03d085f51e3db5b94a1049f09fdfd0c0a981fb42 # force PythonInterp to 2 # required for Ubuntu Focal / Debian Bullseye if 'python-is-python2' is not installed
 
-git cherry-pick f1758b2f47b4523db80679ca057cf5ad6eb50fb9
+git cherry-pick f1758b2f47b4523db80679ca057cf5ad6eb50fb9 # fixpybind210322
 
 # https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake
 cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DCMAKE_CXX_FLAGS=-std=gnu++11 -DBoost_NO_BOOST_CMAKE=1
