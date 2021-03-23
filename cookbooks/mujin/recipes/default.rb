@@ -28,10 +28,18 @@ python2 -m easy_install pip~=20.0
     EOS
   end
 else
-  %w{libopenscenegraph-3.4-dev python-dev python-django python-beautifulsoup python-django-nose python-pip}.each do |each_package|
+  %w{libopenscenegraph-3.4-dev python-dev python-django python-django-nose python-pip}.each do |each_package|
     package each_package do
       action :install
       options "--force-yes"
+    end
+  end
+  unless (node[:platform]=='debian'&&node[:platform_version].to_i==10)
+    %w{python-beautifulsoup}.each do |each_package|
+      package each_package do
+        action :install
+        options "--force-yes"
+      end
     end
   end
 end
@@ -47,7 +55,8 @@ end
     options "--force-yes"
   end
 end
-if (node[:platform]=='debian'&&node[:platform_version].to_i==11) ||
+if (node[:platform]=='debian'&&node[:platform_version].to_i==10) ||
+   (node[:platform]=='debian'&&node[:platform_version].to_i==11) ||
    (node[:platform]=='debian'&&node[:platform_version].start_with?('bullseye'))
   %w{openjdk-11-jre-headless jenkins}.each do |each_package|
     package each_package do
