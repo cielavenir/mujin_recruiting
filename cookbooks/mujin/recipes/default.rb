@@ -1,10 +1,10 @@
-execute "add backports source" do
-  command <<-EOS
-if grep '^Debian GNU/Linux 8' /etc/issue >/dev/null; then
-  echo deb http://archive.debian.org/debian jessie-backports main > /etc/apt/sources.list.d/backports.list
-  echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/ignorevalid.conf
-fi
-  EOS
+if (node[:platform]=='debian'&&node[:platform_version].to_i==8)
+  execute "add backports source" do
+    command <<-EOS
+echo deb http://archive.debian.org/debian jessie-backports main > /etc/apt/sources.list.d/backports.list
+echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/ignorevalid.conf
+    EOS
+  end
 end
 execute "update apt package part1" do
   command "apt-get update -y"
@@ -21,23 +21,46 @@ end
 execute "add jenkins source" do
   command "echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list"
 end
-execute "add deb-multimedia source" do
-  command <<-EOS
-if grep '^Debian GNU/Linux 8' /etc/issue >/dev/null; then
-  apt-get install -y ca-certificates-java/jessie-backports openjdk-8-jre-headless/jessie-backports liblog4cxx10-dev
-  apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5C808C2B65558117
-  echo deb http://www.deb-multimedia.org jessie main non-free > /etc/apt/sources.list.d/multimedia.list
+if (node[:platform]=='debian'&&node[:platform_version].to_i==8)
+  %w{ca-certificates-java openjdk-8-jre-headless}.each do |each_package|
+    package each_package do
+      action :install
+      options "--force-yes -t jessie-backports"
+    end
+  end
+  %w{liblog4cxx10-dev}.each do |each_package|
+    package each_package do
+      action :install
+      options "--force-yes"
+    end
+  end
+  execute "add deb-multimedia source" do
+    command <<-EOS
+apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5C808C2B65558117
+echo deb http://www.deb-multimedia.org jessie main non-free > /etc/apt/sources.list.d/multimedia.list
+    EOS
+  end
+  execute "force java8" do
+    command <<-EOS
+sudo update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+    EOS
+  end
 else
-  apt-get install -y liblog4cxx-dev
-fi
-  EOS
+  %w{liblog4cxx-dev}.each do |each_package|
+    package each_package do
+      action :install
+      options "--force-yes"
+    end
+  end
 end
-execute "install libopenscenegraph-3.4-dev (if stretch)" do
-  command <<-EOS
-if grep '^Debian GNU/Linux 9' /etc/issue >/dev/null; then
-  apt-get install -y libopenscenegraph-3.4-dev qtbase5-dev
-fi
-  EOS
+
+if (node[:platform]=='debian'&&node[:platform_version].to_i==9)
+  %w{libopenscenegraph-3.4-dev qtbase5-dev}.each do |each_package|
+    package each_package do
+      action :install
+      options "--force-yes"
+    end
+  end
 end
 execute "update apt package part2" do
   command "apt-get update -y"
@@ -60,8 +83,22 @@ end
 end
 execute "install sympy" do
   command <<-EOS
-pip install numpy==1.14.2 sympy==0.7.1 IPython==5.8.0
+pip install numpy==1.14.2 sympy==0.7.1
   EOS
+end
+if (node[:platform]=='debian'&&node[:platform_version].to_i==8) ||
+   (node[:platform]=='ubuntu'&&node[:platform_version]=='16.04')
+  execute "install IPython" do
+    command <<-EOS
+pip install 'IPython<4'
+    EOS
+  end
+else
+  execute "install IPython" do
+    command <<-EOS
+pip install IPython==5.8.0
+    EOS
+  end
 end
 #must be different command
 execute "install scipy" do
@@ -130,13 +167,13 @@ git config --local user.name 'knife-solo'
 #git cherry-pick addfd9e8baac327d86245515c6d4595a4f05aa59 # https://github.com/rdiankov/openrave/pull/703 (fix fclmanagercache.h)
 #cmake ..
 
-#openrave 0.25
-git checkout origin/master # detach HEAD
-#git checkout 2656da7b573004e3e12109b9831797a758a86981 # if master is advanced
+#openrave 0.34
+#git checkout origin/master # detach HEAD
+git checkout f2938c011f32d8c5e833a90cc9973cd12b588839 # final version jessie supports (even with patch)
 git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
-git cherry-pick 40d1e31e431523bfd1ec2c0a7c351a008ca93f91 # https://github.com/rdiankov/openrave/pull/708 (fix FCL_LDFLAGS)
-git cherry-pick 18831785c536f801f1af66fffff7eb7bec60d8e8
+git cherry-pick ae571463e19c80756dcd8abbc8ba3279dea64aa9 # https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
+
 cmake .. -GNinja -DCMAKE_CXX_FLAGS=-std=gnu++11
 if grep '^Debian GNU/Linux 8' /etc/issue >/dev/null; then
   # workaround for broken libstdc++ 4.9 C++11 mode
