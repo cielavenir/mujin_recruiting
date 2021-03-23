@@ -16,14 +16,20 @@ end
 execute "update apt package part2" do
   command "apt-get update -y"
 end
-execute "install specific lib" do
-  command <<-EOS
-if grep '^Debian GNU/Linux' /etc/issue >/dev/null; then
-  apt-get install -y openjdk-11-jre-headless
+if (node[:platform]=='debian'&&node[:platform_version].to_i==10)
+  %w{openjdk-11-jre-headless}.each do |each_package|
+    package each_package do
+      action :install
+      options "--force-yes"
+    end
+  end
 else
-  apt-get install -y openjdk-8-jre-headless libsoqt4-dev
-fi
-  EOS
+  %w{openjdk-8-jre-headless libsoqt4-dev}.each do |each_package|
+    package each_package do
+      action :install
+      options "--force-yes"
+    end
+  end
 end
 %w{liblog4cxx-dev libboost-numpy-dev libopenscenegraph-dev}.each do |each_package|
   # libopenscenegraph-3.4-dev (and qtbase5-dev) are not compatible with boost-1.6x branchi, which targets to Qt4 OSG!
@@ -38,10 +44,11 @@ end
     options "--force-yes"
   end
 end
-### sorry, need to downgrade coin/soqt on buster ###
-execute "downgrade coin/soqt (debian buster)" do
-  command <<-EOS
-if grep '^Debian GNU/Linux' /etc/issue >/dev/null && [ ! -d soqt ]; then
+if (node[:platform]=='debian'&&node[:platform_version].to_i==10)
+  ### sorry, need to downgrade coin/soqt on buster ###
+  execute "downgrade coin/soqt (debian buster)" do
+    command <<-EOS
+if [ ! -d soqt ]; then
   mkdir soqt
   git -C /vagrant show origin/soqt_buster:soqt.tar | tar -C soqt -x
   cd soqt
@@ -49,7 +56,8 @@ if grep '^Debian GNU/Linux' /etc/issue >/dev/null && [ ! -d soqt ]; then
   cd ..
   apt-get -y install -f
 fi
-  EOS
+    EOS
+  end
 end
 %w{libqt4-dev qt4-dev-tools libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libqhull-dev libann-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-python-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev python-dev python-django python-pip python-django-nose python-coverage python-opengl jenkins}.each do |each_package|
   package each_package do
