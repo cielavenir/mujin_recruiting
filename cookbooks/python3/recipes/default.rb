@@ -66,7 +66,7 @@ python3 -m pip install pyopengl
     EOS
   end
 else
-  %w{python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
+  %w{python3-coverage python3-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
     package each_package do
       action :install
       options "--force-yes"

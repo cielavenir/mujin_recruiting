@@ -27,3 +27,14 @@ MUJIN_RECRUITING=stretch vagrant up
 
 Use vagrant.sh for all versions.
 
+## Python3
+
+We are shipping experimental Python3 build. Only focal and bullseye support this option.
+
+Use:
+
+```
+MUJIN_PYTHON3=1 MUJIN_RECRUITING=bullseye vagrant up # or focal
+./vagrant_python3.sh
+```
+
