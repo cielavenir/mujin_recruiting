@@ -182,7 +182,7 @@ git fetch ciel # for some special patch commit
 git config --local user.email 'knife-solo@vagrant.example.com'
 git config --local user.name 'knife-solo'
 
-git checkout ciel/python3_210324 # detach HEAD
+git checkout ciel/python3_210326 # detach HEAD
 #git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 #git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 #git cherry-pick ae571463e19c80756dcd8abbc8ba3279dea64aa9 # https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
