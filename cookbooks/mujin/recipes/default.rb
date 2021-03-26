@@ -164,6 +164,20 @@ ninja -j4 && ninja install
 cd ../..
   EOS
 end
+execute "install msgpack-c" do
+  command <<-EOS
+git clone https://github.com/msgpack/msgpack-c && mkdir msgpack-c/build
+cd msgpack-c/build
+git config --local user.email 'knife-solo@vagrant.example.com'
+git config --local user.name 'knife-solo'
+
+git checkout cpp-1.3.0
+git cherry-pick 304ff96d04599401172568d042723ff507e78cc3 # fallthrough
+cmake .. -GNinja -DMSGPACK_BUILD_EXAMPLES=OFF -DMSGPACK_BUILD_TESTS=OFF
+ninja -j4 && ninja install
+cd ../..
+  EOS
+end
 execute "install openrave" do
   command <<-EOS
 git clone https://github.com/rdiankov/openrave.git && mkdir openrave/build
