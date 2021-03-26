@@ -16,7 +16,7 @@ end
 if (node[:platform]=='ubuntu'&&node[:platform_version]=='20.04') ||
    (node[:platform]=='debian'&&node[:platform_version].to_i==11) ||
    (node[:platform]=='debian'&&node[:platform_version].start_with?('bullseye'))
-  %w{libopenscenegraph-dev python3-dev python3-setuptools python3-pip}.each do |each_package|
+  %w{libopenscenegraph-dev python3-dev python3-setuptools python3-pip python3-nose}.each do |each_package|
     package each_package do
       action :install
       options "--force-yes"
