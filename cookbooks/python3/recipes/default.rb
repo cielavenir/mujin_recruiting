@@ -82,16 +82,23 @@ end
   end
 end
 
-=begin
-1. numpy 1.18.5 is the final version supported by openrave.
-2. sympy installation is under investigation.
-=end
-
-execute "install sympy" do
+# numpy 1.18.5 is the final version supported by openrave Python3 (due to import_array definition).
+execute "install numpy" do
   command <<-EOS
 python3 -m pip install numpy==1.18.5 IPython==7.21.0
   EOS
 end
+
+# sympy 0.7.1  : Incompatible with Python3
+# sympy 0.7.2  : SympifyError: SympifyError: None
+# sympy 0.7.4+ : TypeError: symbolic boolean expression has no truth value.
+execute "install sympy" do
+  # Only sympy 0.7.3 is somehow compatible!!!
+  command <<-EOS
+python3 -m pip install https://files.pythonhosted.org/packages/31/4c/eb5340171866063924799cb7354e4d046c4634170eb2a337191b68227557/sympy-0.7.3-py3.3.tar.gz
+  EOS
+end
+
 #must be different command
 execute "install scipy" do
   command <<-EOS
