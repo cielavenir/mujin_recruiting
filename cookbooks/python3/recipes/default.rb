@@ -196,11 +196,10 @@ git fetch ciel # for some special patch commit
 git config --local user.email 'knife-solo@vagrant.example.com'
 git config --local user.name 'knife-solo'
 
-git checkout ciel/python3_210326 # detach HEAD
+git checkout ciel/python3_210412 # detach HEAD
 #git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 #git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 #git cherry-pick ae571463e19c80756dcd8abbc8ba3279dea64aa9 # https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
-#git cherry-pick f1758b2f47b4523db80679ca057cf5ad6eb50fb9 # fixpybind210322
 
 # https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake
 cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DCMAKE_CXX_FLAGS=-std=gnu++11 -DBoost_NO_BOOST_CMAKE=1
