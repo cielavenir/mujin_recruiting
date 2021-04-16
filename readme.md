@@ -38,3 +38,5 @@ MUJIN_PYTHON3=1 MUJIN_RECRUITING=bullseye vagrant up # or focal
 ./vagrant_python3.sh
 ```
 
+As of 20210416, Python3 support is now beta, not experimental.
+
