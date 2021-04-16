@@ -191,6 +191,8 @@ git checkout origin/production # detach HEAD
 git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick ae571463e19c80756dcd8abbc8ba3279dea64aa9 # https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
+git cherry-pick a04d05cb7c66c183e7757fa81e91e815b6ea6cb0 # Fixed pybind11 build
+
 git cherry-pick 03d085f51e3db5b94a1049f09fdfd0c0a981fb42 # force PythonInterp to 2 # required for Ubuntu Focal / Debian Bullseye if 'python-is-python2' is not installed
 
 # https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake
