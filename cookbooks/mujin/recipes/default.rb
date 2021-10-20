@@ -4,7 +4,7 @@ end
 %w{dirmngr gnupg apt-transport-https liblog4cxx-dev}.each do |each_package|
   package each_package do
     action :install
-    options "--force-yes"
+    options "--force-yes --no-install-recommends"
   end
 end
 execute "add jenkins key" do
@@ -19,7 +19,7 @@ if (node[:platform]=='ubuntu'&&node[:platform_version]=='20.04') ||
   %w{libopenscenegraph-dev python2-dev python-setuptools}.each do |each_package|
     package each_package do
       action :install
-      options "--force-yes"
+      options "--force-yes --no-install-recommends"
     end
   end
   execute "install pip" do
@@ -31,14 +31,14 @@ else
   %w{libopenscenegraph-3.4-dev python-dev python-django python-django-nose python-pip}.each do |each_package|
     package each_package do
       action :install
-      options "--force-yes"
+      options "--force-yes --no-install-recommends"
     end
   end
   unless (node[:platform]=='debian'&&node[:platform_version].to_i==10)
     %w{python-beautifulsoup}.each do |each_package|
       package each_package do
         action :install
-        options "--force-yes"
+        options "--force-yes --no-install-recommends"
       end
     end
   end
@@ -52,7 +52,7 @@ end
 %w{g++ gfortran git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev qtbase5-dev libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libqhull-dev libann-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev}.each do |each_package|
   package each_package do
     action :install
-    options "--force-yes"
+    options "--force-yes --no-install-recommends"
   end
 end
 if (node[:platform]=='debian'&&node[:platform_version].to_i==10) ||
@@ -61,7 +61,7 @@ if (node[:platform]=='debian'&&node[:platform_version].to_i==10) ||
   %w{openjdk-11-jre-headless jenkins}.each do |each_package|
     package each_package do
       action :install
-      options "--force-yes"
+      options "--force-yes --no-install-recommends"
     end
   end
   execute "install pyopengl" do
@@ -73,7 +73,7 @@ else
   %w{python-coverage python-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
     package each_package do
       action :install
-      options "--force-yes"
+      options "--force-yes --no-install-recommends"
     end
   end
 end
@@ -82,7 +82,7 @@ end
 %w{ninja-build cmake-curses-gui silversearcher-ag}.each do |each_package|
   package each_package do
     action :install
-    options "--force-yes"
+    options "--force-yes --no-install-recommends"
   end
 end
 execute "install sympy" do
@@ -187,7 +187,7 @@ git fetch ciel # for some special patch commit
 git config --local user.email 'knife-solo@vagrant.example.com'
 git config --local user.name 'knife-solo'
 
-git checkout origin/production # detach HEAD
+git checkout origin/fix-clang-c++14_production # detach HEAD
 git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick ae571463e19c80756dcd8abbc8ba3279dea64aa9 # https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
@@ -195,8 +195,9 @@ git cherry-pick a04d05cb7c66c183e7757fa81e91e815b6ea6cb0 # Fixed pybind11 build
 
 git cherry-pick 03d085f51e3db5b94a1049f09fdfd0c0a981fb42 # force PythonInterp to 2 # required for Ubuntu Focal / Debian Bullseye if 'python-is-python2' is not installed
 
+# -DCMAKE_CXX_FLAGS is not required in recent openrave revision.
 # https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake
-cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DCMAKE_CXX_FLAGS=-std=gnu++11 -DBoost_NO_BOOST_CMAKE=1
+cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DBoost_NO_BOOST_CMAKE=1
 
 ninja -j4 && ninja install
 cd ../..
