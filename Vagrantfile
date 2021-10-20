@@ -5,9 +5,11 @@
 VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vmname = 'mujin'
+  vmname = 'python3' if ENV['MUJIN_PYTHON3']
+  vmname = 'clang' if ENV['MUJIN_CLANG']
+
   # BOX name and url
   if ENV['MUJIN_RECRUITING']=='focal'
-    vmname = 'python3' if ENV['MUJIN_PYTHON3']
     config.vm.box = "ubuntu/focal64"
     config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/focal64"
   elsif ENV['MUJIN_RECRUITING']=='bionic'
@@ -17,7 +19,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.box = "ubuntu/xenial64"
     config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/xenial64"
   elsif ENV['MUJIN_RECRUITING']=='bullseye'
-    vmname = 'python3' if ENV['MUJIN_PYTHON3']
     config.vm.box = "debian/bullseye64"
     config.vm.box_url = "https://app.vagrantup.com/debian/boxes/bullseye64"
   elsif ENV['MUJIN_RECRUITING']=='buster'
