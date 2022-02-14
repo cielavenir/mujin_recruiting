@@ -16,6 +16,7 @@ execute "add jenkins source" do
   command "echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list"
 end
 if (node[:platform]=='ubuntu'&&node[:platform_version]=='20.04') ||
+   (node[:platform]=='ubuntu'&&node[:platform_version]=='22.04') ||
    (node[:platform]=='debian'&&node[:platform_version].to_i==11) ||
    (node[:platform]=='debian'&&node[:platform_version].start_with?('bullseye'))
   %w{libopenscenegraph-dev python2-dev python-setuptools}.each do |each_package|
@@ -51,13 +52,14 @@ end
 #execute "upgrade apt package" do
 #  command "apt-get upgrade -y"
 #end
-%w{clang git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev qtbase5-dev libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libqhull-dev libann-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev}.each do |each_package|
+%w{clang git cmake pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev qtbase5-dev libqt5opengl5-dev libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libqhull-dev libann-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev libeigen3-dev}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes --no-install-recommends"
   end
 end
-if (node[:platform]=='debian'&&node[:platform_version].to_i==10) ||
+if (node[:platform]=='ubuntu'&&node[:platform_version]=='22.04') ||
+   (node[:platform]=='debian'&&node[:platform_version].to_i==10) ||
    (node[:platform]=='debian'&&node[:platform_version].to_i==11) ||
    (node[:platform]=='debian'&&node[:platform_version].start_with?('bullseye'))
   %w{openjdk-11-jre-headless jenkins}.each do |each_package|
@@ -89,13 +91,13 @@ end
 end
 execute "install sympy" do
   command <<-EOS
-python2 -m pip install numpy==1.14.2 sympy==0.7.1 IPython==5.8.0
+python2 -m pip install numpy==1.16.5 sympy==0.7.1 IPython==5.10.0
   EOS
 end
 #must be different command
 execute "install scipy" do
   command <<-EOS
-python2 -m pip install scipy==1.1.0
+python2 -m pip install scipy==1.2.3
   EOS
 end
 execute "install bullet3 (2.82)" do
@@ -139,7 +141,7 @@ execute "install fcl" do
   command <<-EOS
 git clone https://github.com/rdiankov/fcl.git && mkdir fcl/build
 cd fcl/build
-git checkout origin/kenjiSpeedUpAdditions
+git checkout origin/trimeshContactPoints20200813
 cmake .. -GNinja -DFCL_BUILD_TESTS=OFF
 ninja -j4 && ninja install
 cd ../..
@@ -184,22 +186,30 @@ execute "install openrave" do
   command <<-EOS
 git clone https://github.com/rdiankov/openrave.git && mkdir openrave/build
 cd openrave/build
-git remote add ciel https://github.com/cielavenir/openrave.git
-git fetch ciel # for some special patch commit
+# git remote add ciel https://github.com/cielavenir/openrave.git
+# git fetch ciel # for some special patch commit
 git config --local user.email 'knife-solo@vagrant.example.com'
 git config --local user.name 'knife-solo'
 
-git checkout origin/fix-clang-c++14_production # detach HEAD
-git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
+git checkout origin/production # detach HEAD
+git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # [fixbulletrave] https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
-git cherry-pick ae571463e19c80756dcd8abbc8ba3279dea64aa9 # https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
-git cherry-pick a04d05cb7c66c183e7757fa81e91e815b6ea6cb0 # Fixed pybind11 build
+git cherry-pick ae571463e19c80756dcd8abbc8ba3279dea64aa9 # [fix_bug_633_cherrypick] https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
+
+# fix ubuntu jammy compatibility
+git cherry-pick 8a772170283ea8a9e11faa2f82898a05fa5cb4f6
+git cherry-pick 89dfaa6e2d39a2454cfb5ae79d2f9936b624a539
+git cherry-pick 606c0caa4b026c8821860f8f5f86898394ea847f # f2aac43f2baadba268d97efc77233ac41b527467 # modified for fix_bug_633_cherrypick
 
 git cherry-pick 03d085f51e3db5b94a1049f09fdfd0c0a981fb42 # force PythonInterp to 2 # required for Ubuntu Focal / Debian Bullseye if 'python-is-python2' is not installed
 
-# -DCMAKE_CXX_FLAGS is not required in recent openrave revision.
+FLAG_CMAKE_CXX_STANDARD=""
+if grep '^Ubuntu J' /etc/issue >/dev/null || grep '^Ubuntu 22' /etc/issue >/dev/null || grep '^Debian GNU/Linux 12' /etc/issue >/dev/null || grep '^Debian GNU/Linux bookworm' /etc/issue >/dev/null; then
+  FLAG_CMAKE_CXX_STANDARD="-DCMAKE_CXX_STANDARD=17"
+fi
+
 # https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake
-cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DBoost_NO_BOOST_CMAKE=1
+cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON ${FLAG_CMAKE_CXX_STANDARD}
 
 ninja -j4 && ninja install
 cd ../..
