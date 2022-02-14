@@ -207,6 +207,9 @@ git cherry-pick ae571463e19c80756dcd8abbc8ba3279dea64aa9 # [fix_bug_633_cherrypi
 git cherry-pick 8a772170283ea8a9e11faa2f82898a05fa5cb4f6
 git cherry-pick 89dfaa6e2d39a2454cfb5ae79d2f9936b624a539
 git cherry-pick 606c0caa4b026c8821860f8f5f86898394ea847f # f2aac43f2baadba268d97efc77233ac41b527467 # modified for fix_bug_633_cherrypick
+git cherry-pick 1aa669f22cc1bf960c6c986771deeae8649508db
+git cherry-pick 1ca6ccaa765788a0f9b8f3733f6f464b5899a944
+git cherry-pick 6df9acc4008e0bfa111e3174f416acd8493e5aaa
 
 FLAG_CMAKE_CXX_STANDARD=""
 if grep '^Ubuntu J' /etc/issue >/dev/null || grep '^Ubuntu 22' /etc/issue >/dev/null || grep '^Debian GNU/Linux 12' /etc/issue >/dev/null || grep '^Debian GNU/Linux bookworm' /etc/issue >/dev/null; then
