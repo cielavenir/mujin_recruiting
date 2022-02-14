@@ -1,7 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-
 VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vmname = 'mujin'
@@ -9,7 +8,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vmname = 'clang' if ENV['MUJIN_CLANG']
 
   # BOX name and url
-  if ENV['MUJIN_RECRUITING']=='focal'
+  if ENV['MUJIN_RECRUITING']=='jammy'
+    config.vm.box = "ubuntu/jammy64"
+    config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/jammy64"
+  elsif ENV['MUJIN_RECRUITING']=='focal'
     config.vm.box = "ubuntu/focal64"
     config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/focal64"
   elsif ENV['MUJIN_RECRUITING']=='bionic'
@@ -27,9 +29,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   elsif ENV['MUJIN_RECRUITING']=='stretch'
     config.vm.box = "debian/stretch64"
     config.vm.box_url = "https://app.vagrantup.com/debian/boxes/stretch64"
-  else
+  elsif ENV['MUJIN_RECRUITING']=='jessie'
     config.vm.box = "debian/jessie64"
     config.vm.box_url = "https://app.vagrantup.com/debian/boxes/jessie64"
+  elsif ['up', 'destroy'].include?(ARGV[0])
+    raise 'MUJIN_RECRUITING=[jammy|focal|bionic|xenial|bullseye|buster|stretch|jessie] [MUJIN_PYTHON3=1] [MUJIN_CLANG=1] vagrant up'
   end
 
   config.vm.provider :virtualbox do |vb|
