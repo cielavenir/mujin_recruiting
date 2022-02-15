@@ -24,12 +24,13 @@ MUJIN_RECRUITING=stretch vagrant up
 |xenial|./vagrant.sh|
 |bionic|./vagrant.sh|
 |focal|./vagrant.sh|
+|jammy|./vagrant.sh|
 
 Use vagrant.sh for all versions.
 
 ## Python3
 
-We are shipping experimental Python3 build. Only focal and bullseye support this option.
+We are shipping experimental Python3 build. Only focal/jammy/bullseye support this option.
 
 Use:
 
@@ -39,4 +40,3 @@ MUJIN_PYTHON3=1 MUJIN_RECRUITING=bullseye vagrant up # or focal
 ```
 
 As of 20210416, Python3 support is now beta, not experimental.
-
