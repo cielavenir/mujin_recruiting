@@ -159,8 +159,10 @@ git config --local user.name 'knife-solo'
 git checkout v2.2.4
 git cherry-pick 94824d68a037d99253b92a5b260bb04907c42355 # dict_get
 git cherry-pick 98c9f77e5481af4cbc7eb092e1866151461e3508 # item_accessor_T
-git cherry-pick dae2d434bd806eac67e38f3c49cfc91f46e4fd88 # fix_enum_str
 git cherry-pick 2e08ce9ba75f5a2d87a6f12e6ab657ac78444e8e # enumValues
+git cherry-pick 90963ea53179ff536308550ba066d1a86f31021b
+git cherry-pick 4a106c03a0139102ca905826f661c3c9a7b9a4fb
+git cherry-pick 3924e5bc2ea2320dad07e991d876cb1d65e7176f
 cmake .. -GNinja -DPYBIND11_TEST=OFF -DPythonLibsNew_FIND_VERSION=2
 ninja -j4 && ninja install
 cd ../..
@@ -192,15 +194,7 @@ git config --local user.name 'knife-solo'
 git checkout origin/production # detach HEAD
 git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # [fixbulletrave] https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
-git cherry-pick ae571463e19c80756dcd8abbc8ba3279dea64aa9 # [fix_bug_633_cherrypick] https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
-
-# fix ubuntu jammy compatibility
-git cherry-pick 8a772170283ea8a9e11faa2f82898a05fa5cb4f6
-git cherry-pick 89dfaa6e2d39a2454cfb5ae79d2f9936b624a539
-git cherry-pick 606c0caa4b026c8821860f8f5f86898394ea847f # f2aac43f2baadba268d97efc77233ac41b527467 # modified for fix_bug_633_cherrypick
-git cherry-pick 1aa669f22cc1bf960c6c986771deeae8649508db
-git cherry-pick 1ca6ccaa765788a0f9b8f3733f6f464b5899a944
-git cherry-pick 6df9acc4008e0bfa111e3174f416acd8493e5aaa
+git cherry-pick 62998a607ec7a6f4b3a7614f9f59ccb8acf9415f # [fix_bug_633_cherrypick] https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
 
 git cherry-pick 03d085f51e3db5b94a1049f09fdfd0c0a981fb42 # force PythonInterp to 2 # required for Ubuntu Focal / Debian Bullseye if 'python-is-python2' is not installed
 
