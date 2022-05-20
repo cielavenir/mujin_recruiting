@@ -39,7 +39,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider :virtualbox do |vb|
     # VirtualBox VM name
     vb.name = vmname
-    vb.customize ["modifyvm", :id, "--memory", "5120", "--cpus", "4"]
+    vb.customize ["modifyvm", :id, "--memory", (8*1024).to_s, "--cpus", "4"]
   end
 
   # VM boot timeout
