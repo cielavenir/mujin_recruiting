@@ -18,7 +18,8 @@ log.target_level = :debug
 " > "${DIR}/${SSH_CONFIG_NAME}.rb"
 
 #uh-oh, Net::SSH (knife-solo dependency) is too old
-ssh -F "${DIR}/${SSH_CONFIG_NAME}" "${HOSTNAME}" "sudo bash -c 'if [[ \"\$(ssh -V 2>&1 | cut -d\  -f1 | cut -d_ -f2)\" > \"8\" ]]; then echo PubkeyAcceptedAlgorithms=+ssh-rsa >> /etc/ssh/sshd_config; /etc/init.d/ssh restart; fi'"
+#8.8 or later are affected
+ssh -F "${DIR}/${SSH_CONFIG_NAME}" "${HOSTNAME}" "sudo bash -c 'if [[ \"\$(ssh -V 2>&1 | cut -d\  -f1 | cut -d_ -f2)\" > \"8.8\" ]]; then echo PubkeyAcceptedAlgorithms=+ssh-rsa >> /etc/ssh/sshd_config; /etc/init.d/ssh restart; fi'"
 
 #ssh -F "${DIR}/${SSH_CONFIG_NAME}" "${HOSTNAME}"
 #berks vendor vendor/cookbooks
