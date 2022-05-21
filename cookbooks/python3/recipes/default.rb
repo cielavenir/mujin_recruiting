@@ -15,10 +15,8 @@ echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins
 echo "Acquire { https::Verify-Peer false }" >> /etc/apt/apt.conf.d/99verify-peer.conf
   EOS
 end
-if (node[:platform]=='ubuntu'&&node[:platform_version]=='20.04') ||
-   (node[:platform]=='ubuntu'&&node[:platform_version]=='22.04') ||
-   (node[:platform]=='debian'&&node[:platform_version].to_i==11) ||
-   (node[:platform]=='debian'&&node[:platform_version].start_with?('bullseye'))
+if (node[:platform]=='ubuntu' && ['20.04','22.04','24.04'].include?(node[:platform_version])) ||
+   (node[:platform]=='debian' && (node[:platform_version].to_i>=11 || ['bullseye','bookworm'].any?{|ver|node[:platform_version].start_with?(ver)}))
   %w{libopenscenegraph-dev python3-dev python3-setuptools python3-pip python3-nose}.each do |each_package|
     package each_package do
       action :install
@@ -39,6 +37,15 @@ else
         action :install
         options "--force-yes --no-install-recommends"
       end
+    end
+  end
+end
+if (node[:platform]=='ubuntu' && ['20.04','22.04','24.04'].include?(node[:platform_version])) ||
+   (node[:platform]=='debian' && (node[:platform_version].to_i>=10 || ['buster','bullseye','bookworm'].any?{|ver|node[:platform_version].start_with?(ver)}))
+  %w{libcoin-dev libsoqt520-dev}.each do |each_package|
+    package each_package do
+	  action :install
+	  options "--force-yes --no-install-recommends"
     end
   end
 end
@@ -84,10 +91,8 @@ apt-get update -y
   end
 end
 
-if (node[:platform]=='ubuntu'&&node[:platform_version]=='22.04') ||
-   (node[:platform]=='debian'&&node[:platform_version].to_i==10) ||
-   (node[:platform]=='debian'&&node[:platform_version].to_i==11) ||
-   (node[:platform]=='debian'&&node[:platform_version].start_with?('bullseye'))
+if (node[:platform]=='ubuntu' && ['22.04','24.04'].include?(node[:platform_version])) ||
+   (node[:platform]=='debian' && (node[:platform_version].to_i>=10 || ['buster','bullseye','bookworm'].any?{|ver|node[:platform_version].start_with?(ver)}))
   %w{openjdk-11-jre-headless jenkins}.each do |each_package|
     package each_package do
       action :install
