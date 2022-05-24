@@ -76,8 +76,7 @@ echo 'deb http://ftp.debian.org/debian stretch-backports main contrib' | sudo te
 echo 'deb http://ftp.debian.org/debian stretch-backports-sloppy main contrib' | sudo tee -a /etc/apt/sources.list.d/backports.list
 apt-get update -y
 apt install -y --force-yes --no-install-recommends libarchive13/stretch-backports-sloppy
-# apt install -y --force-yes --no-install-recommends cmake-data/stretch-backports cmake/stretch-backports cmake-curses-gui/stretch-backports
-apt install -y --force-yes --no-install-recommends libglvnd-dev/stretch-backports libegl1/stretch-backports libglx0/stretch-backports libegl-mesa0/stretch-backports libglx-mesa0/stretch-backports libdrm-dev/stretch-backports libegl1-mesa/stretch-backports libgl1-mesa-dev/stretch-backports libgl1-mesa-glx/stretch-backports libwayland-egl1-mesa/stretch-backports
+apt install -y --force-yes --no-install-recommends cmake-data/stretch-backports cmake/stretch-backports cmake-curses-gui/stretch-backports libglvnd-dev/stretch-backports libegl1/stretch-backports libglx0/stretch-backports libegl-mesa0/stretch-backports libglx-mesa0/stretch-backports libdrm-dev/stretch-backports libegl1-mesa/stretch-backports libgl1-mesa-dev/stretch-backports libgl1-mesa-glx/stretch-backports libwayland-egl1-mesa/stretch-backports
     EOS
   end
 else
@@ -258,6 +257,7 @@ git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # [fixbulletrave] https
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick bb7e3d83f1bb6e93692f9557c205a7307c4beeb6
 git cherry-pick 62998a607ec7a6f4b3a7614f9f59ccb8acf9415f # [fix_bug_633_cherrypick] https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
+git cherry-pick 529559c546b0b47e0c6af4cfa18b008b373f7f0d # [fixQhullExpression] https://github.com/rdiankov/openrave/pull/1115
 touch ../__chef_patched__
 fi
 
