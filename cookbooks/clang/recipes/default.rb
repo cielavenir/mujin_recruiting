@@ -258,7 +258,6 @@ git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # [fixbulletrave] https
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick bb7e3d83f1bb6e93692f9557c205a7307c4beeb6
 git cherry-pick 62998a607ec7a6f4b3a7614f9f59ccb8acf9415f # [fix_bug_633_cherrypick] https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
-git cherry-pick 529559c546b0b47e0c6af4cfa18b008b373f7f0d # [fixQhullExpression] https://github.com/rdiankov/openrave/pull/1115
 touch ../__chef_patched__
 fi
 
