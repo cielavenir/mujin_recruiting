@@ -69,6 +69,7 @@ end
   end
 end
 
+# CMake 3.10+ is required for the constant `OpenGL::OpenGL`.
 if (node[:platform]=='debian'&&node[:platform_version].to_i==9)
   execute "install cmake" do
     command <<-EOS
