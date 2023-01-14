@@ -154,7 +154,7 @@ execute "install bullet3 (2.82)" do
 set -e
 git clone https://github.com/bulletphysics/bullet3.git && mkdir bullet3/build
 cd bullet3/build
-git checkout tags/2.82
+git checkout 2.82
 cmake .. -GNinja -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC
 ninja -j4 && ninja install
 cd ../..
@@ -175,6 +175,7 @@ execute "install RapidJSON" do
 set -e
 git clone https://github.com/Tencent/rapidjson.git && mkdir rapidjson/build
 cd rapidjson/build
+# there are no stable version available
 cmake .. -GNinja -DRAPIDJSON_HAS_STDSTRING=ON -DRAPIDJSON_BUILD_DOC=OFF -DRAPIDJSON_BUILD_EXAMPLES=OFF -DRAPIDJSON_BUILD_TESTS=OFF
 ninja -j4 && ninja install
 cd ../..
@@ -183,8 +184,9 @@ end
 execute "install assimp" do
   command <<-EOS
 set -e
-git clone https://github.com/rdiankov/assimp.git && mkdir assimp/build
+git clone https://github.com/assimp/assimp.git && mkdir assimp/build
 cd assimp/build
+git checkout v5.2.5
 cmake .. -GNinja
 ninja -j4 && ninja install
 cd ../..
@@ -206,23 +208,11 @@ execute "install pybind11" do
 set -e
 git clone https://github.com/pybind/pybind11.git && mkdir pybind11/build
 cd pybind11/build
-git remote add woody https://github.com/woodychow/pybind11.git
-git fetch woody
+# git remote add woody https://github.com/woodychow/pybind11.git
+# git fetch woody
 git remote add ciel https://github.com/cielavenir/pybind11.git
 git fetch ciel
-git config --local user.email 'knife-solo@vagrant.example.com'
-git config --local user.name 'knife-solo'
-
-if [ ! -f ../__chef_patched__ ]; then
-git checkout v2.2.4
-git cherry-pick 94824d68a037d99253b92a5b260bb04907c42355 # dict_get
-git cherry-pick 98c9f77e5481af4cbc7eb092e1866151461e3508 # item_accessor_T
-git cherry-pick 2e08ce9ba75f5a2d87a6f12e6ab657ac78444e8e # enumValues
-git cherry-pick 90963ea53179ff536308550ba066d1a86f31021b
-git cherry-pick 4a106c03a0139102ca905826f661c3c9a7b9a4fb
-git cherry-pick 3924e5bc2ea2320dad07e991d876cb1d65e7176f
-touch ../__chef_patched__
-fi
+git checkout ciel/v2.9_ty
 
 cmake .. -GNinja -DPYBIND11_TEST=OFF -DPythonLibsNew_FIND_VERSION=3
 ninja -j4 && ninja install
@@ -259,7 +249,8 @@ git config --local user.email 'knife-solo@vagrant.example.com'
 git config --local user.name 'knife-solo'
 
 if [ ! -f ../__chef_patched__ ]; then
-git checkout origin/production # detach HEAD
+# git checkout origin/production # detach HEAD
+git checkout 68e67a14f7e82b1355341ff7e1f8f2ff79f3b323 # cf https://github.com/rdiankov/openrave/issues/1189
 git cherry-pick 03d085f51e3db5b94a1049f09fdfd0c0a981fb42 # force PythonInterp to 2 # required for Ubuntu Focal / Debian Bullseye if 'python-is-python2' is not installed
 git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # [fixbulletrave] https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
