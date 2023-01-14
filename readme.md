@@ -13,7 +13,6 @@ MUJIN_RECRUITING=stretch vagrant up
 - knife-solo 0.7.0 cannot be installed to stretch host due to Ruby version (needs 2.4 or later).
 - knife-solo 0.6.0 has some issues with stretch guest. You can launch knifesolo\_stretchenabler.rb (only once!) to patch knife-solo for workaround.
 
-- Only qtosg UI is available; qtcoin will not be built.
 - This version installs pybind11 python binding.
 
 |Debian/Ubuntu (MUJIN\_RECRUITING= value)|provisioning|
