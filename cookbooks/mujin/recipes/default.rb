@@ -45,6 +45,12 @@ else
     end
   end
 end
+%w{python3-dev python3-setuptools python3-pip python3-nose}.each do |each_package|
+  package each_package do
+    action :install
+    options "--force-yes --no-install-recommends"
+  end
+end
 if (node[:platform]=='ubuntu' && ['20.04','22.04','24.04'].include?(node[:platform_version])) ||
    (node[:platform]=='debian' && (node[:platform_version].to_i>=10 || ['buster','bullseye','bookworm'].any?{|ver|node[:platform_version].start_with?(ver)}))
   %w{libcoin-dev libsoqt520-dev}.each do |each_package|
@@ -120,6 +126,13 @@ else
   end
 end
 
+%w{python3-coverage python3-opengl}.each do |each_package|
+  package each_package do
+    action :install
+    options "--force-yes --no-install-recommends"
+  end
+end
+
 #some debug app
 %w{ninja-build silversearcher-ag}.each do |each_package|
   package each_package do
@@ -127,17 +140,32 @@ end
     options "--force-yes --no-install-recommends"
   end
 end
-execute "install sympy" do
+execute "install sympy (1)" do
   command <<-EOS
 set -e
 python2 -m pip install numpy==1.16.5 sympy==0.7.1 IPython==5.10.0
+python3 -m pip install numpy==1.21.5 IPython==7.31.1
   EOS
 end
+
+# sympy 0.7.1  : Incompatible with Python3
+# sympy 0.7.2  : SympifyError: SympifyError: None
+# sympy 0.7.3  : Somehow partially compatible but there can happen some unresolved variables...
+# sympy 0.7.4+ : TypeError: symbolic boolean expression has no truth value.
+execute "install sympy (2)" do
+  # The only way is to port sympy 0.7.1 to Python3...!
+  command <<-EOS
+set -e
+python3 -m pip install https://github.com/cielavenir/sympy/releases/download/0.7.1-py3/sympy-0.7.1-py3.tar.gz
+  EOS
+end
+
 #must be different command
 execute "install scipy" do
   command <<-EOS
 set -e
 python2 -m pip install scipy==1.2.3
+python3 -m pip install scipy==1.7.3
   EOS
 end
 execute "install bullet3 (2.82)" do
@@ -240,12 +268,11 @@ git config --local user.email 'knife-solo@vagrant.example.com'
 git config --local user.name 'knife-solo'
 
 if [ ! -f ../__chef_patched__ ]; then
-# git checkout origin/production # detach HEAD
-git checkout 68e67a14f7e82b1355341ff7e1f8f2ff79f3b323 # cf https://github.com/rdiankov/openrave/issues/1189
-git cherry-pick 03d085f51e3db5b94a1049f09fdfd0c0a981fb42 # force PythonInterp to 2 # required for Ubuntu Focal / Debian Bullseye if 'python-is-python2' is not installed
+git checkout origin/production # detach HEAD
 git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # [fixbulletrave] https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick bb7e3d83f1bb6e93692f9557c205a7307c4beeb6
+git cherry-pick 4828cebfbcefb1941e6715aef32f54008ed30f8c
 git cherry-pick 62998a607ec7a6f4b3a7614f9f59ccb8acf9415f # [fix_bug_633_cherrypick] https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
 touch ../__chef_patched__
 fi
@@ -260,6 +287,20 @@ cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON ${FLAG_CMAKE_CXX_STANDARD}
 
 ninja -j4 && ninja install
 cd ../..
+
+# https://bugs.launchpad.net/ubuntu/+source/python3-stdlib-extensions/+bug/1832215
+if [ -d /usr/local/lib/python3.8 ] && [ ! -d /usr/local/lib/python3.8/dist-packages/openravepy ]; then
+  ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.8/dist-packages/openravepy
+  ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.8/dist-packages/sympy
+fi
+if [ -d /usr/local/lib/python3.9 ] && [ ! -d /usr/local/lib/python3.9/dist-packages/openravepy ]; then
+  ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.9/dist-packages/openravepy
+  ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.9/dist-packages/sympy
+fi
+if [ -d /usr/local/lib/python3.10 ] && [ ! -d /usr/local/lib/python3.10/dist-packages/openravepy ]; then
+  ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.10/dist-packages/openravepy
+  ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.10/dist-packages/sympy
+fi
   EOS
 end
 execute "install openrave_sample_app" do
