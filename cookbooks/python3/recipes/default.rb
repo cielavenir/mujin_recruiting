@@ -225,7 +225,23 @@ ninja -j4 && ninja install
 cd ../..
   EOS
 end
+
 =begin
+stock pybind11 has issues on enum values.
+
+$ python3 -m openravepy -i --listplugins
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/usr/local/lib/python3.11/site-packages/openravepy/_openravepy_/__main__.py", line 289, in <module>
+    main()
+  File "/usr/local/lib/python3.11/site-packages/openravepy/_openravepy_/__main__.py", line 180, in main
+    for type in InterfaceType.values.values():
+                ^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'openravepy._openravepy_.openravepy_int.InterfaceTy' has no attribute 'values'. Did you mean: 'value'?
+=end
+
+#=begin
 execute "install pybind11" do
   command <<-'EOS'
 set -e
@@ -242,7 +258,8 @@ ninja -j4 && ninja install
 cd ../..
   EOS
 end
-=end
+#=end
+=begin
 execute "install pybind11" do
   command <<-'EOS'
 set -e
@@ -255,6 +272,7 @@ ninja -j4 && ninja install
 cd ../..
   EOS
 end
+=end
 execute "install msgpack-c" do
   command <<-'EOS'
 set -e

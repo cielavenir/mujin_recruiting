@@ -212,7 +212,7 @@ ninja -j4 && ninja install
 cd ../..
   EOS
 end
-=begin
+#=begin
 execute "install pybind11" do
   command <<-'EOS'
 set -e
@@ -229,7 +229,8 @@ ninja -j4 && ninja install
 cd ../..
   EOS
 end
-=end
+#=end
+=begin
 execute "install pybind11" do
   command <<-'EOS'
 set -e
@@ -242,6 +243,7 @@ ninja -j4 && ninja install
 cd ../..
   EOS
 end
+=end
 execute "install msgpack-c" do
   command <<-'EOS'
 set -e
