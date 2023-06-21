@@ -300,7 +300,7 @@ if grep '^Ubuntu J' /etc/issue >/dev/null || grep '^Ubuntu 22' /etc/issue >/dev/
 fi
 
 # https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake
-cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON ${FLAG_CMAKE_CXX_STANDARD}
+VIRTUAL_ENV=/home/$(id -u -n 1000)/openrave cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DOPT_PYTHON=OFF -DPython3_FIND_VIRTUALENV=STANDARD ${FLAG_CMAKE_CXX_STANDARD}
 
 ninja -j4 && ninja install
 cd ../..
