@@ -20,6 +20,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   elsif ENV['MUJIN_RECRUITING']=='xenial'
     config.vm.box = "ubuntu/xenial64"
     config.vm.box_url = "https://app.vagrantup.com/ubuntu/boxes/xenial64"
+  elsif ENV['MUJIN_RECRUITING']=='bookworm'
+    config.vm.box = "debian/bookworm64"
+    config.vm.box_url = "https://app.vagrantup.com/debian/boxes/bookworm64"
   elsif ENV['MUJIN_RECRUITING']=='bullseye'
     config.vm.box = "debian/bullseye64"
     config.vm.box_url = "https://app.vagrantup.com/debian/boxes/bullseye64"
@@ -49,7 +52,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   #config.vm.provision :chef_solo do |chef|
   #  chef.cookbooks_path = "cookbooks"
-  #  chef.add_recipe "mujin"
+  #  chef.add_recipe vmname
   #end
   config.vm.network :forwarded_port, guest: 8000, host: 8000
   config.vm.network :forwarded_port, guest: 8080, host: 8080
