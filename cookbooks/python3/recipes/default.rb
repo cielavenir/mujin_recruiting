@@ -141,7 +141,7 @@ end
 execute "install numpy" do
   command <<-EOS
 set -e
-python3 -m pip install numpy==1.21.5 IPython==7.31.1
+python3 -m pip install numpy==1.25.0 IPython==8.14.0
   EOS
 end
 
@@ -161,7 +161,7 @@ end
 execute "install scipy" do
   command <<-EOS
 set -e
-python3 -m pip install scipy==1.7.3
+python3 -m pip install scipy==1.10.1
   EOS
 end
 execute "install bullet3 (2.82)" do
