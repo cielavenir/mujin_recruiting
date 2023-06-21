@@ -10,7 +10,7 @@ end
 execute "add jenkins source" do
   command <<-EOS
 set -e
-wget -q --no-check-certificate -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+wget -q --no-check-certificate -O - https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo apt-key add -
 echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list
 echo "Acquire { https::Verify-Peer false }" >> /etc/apt/apt.conf.d/99verify-peer.conf
   EOS

@@ -36,7 +36,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.box = "debian/jessie64"
     config.vm.box_url = "https://app.vagrantup.com/debian/boxes/jessie64"
   elsif ['up', 'destroy'].include?(ARGV[0])
-    raise 'MUJIN_RECRUITING=[jammy|focal|bionic|xenial|bullseye|buster|stretch|jessie] [MUJIN_PYTHON3=1] [MUJIN_CLANG=1] vagrant up'
+    raise 'MUJIN_RECRUITING=[jammy|focal|bionic|xenial|bookworm|bullseye|buster|stretch|jessie] [MUJIN_PYTHON3=1] [MUJIN_CLANG=1] vagrant up'
   end
 
   config.vm.provider :virtualbox do |vb|
