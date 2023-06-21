@@ -10,7 +10,7 @@ end
   end
 end
 execute "add jenkins source" do
-  command <<-EOS
+  command <<-'EOS'
 set -e
 wget -q --no-check-certificate -O - https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo apt-key add -
 echo deb https://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list
@@ -26,7 +26,7 @@ if (node[:platform]=='ubuntu' && ['20.04','22.04','24.04'].include?(node[:platfo
     end
   end
   execute "install pip" do
-    command <<-EOS
+    command <<-'EOS'
 set -e
 python2 -m easy_install pip~=20.0
     EOS
@@ -78,7 +78,7 @@ end
 # CMake 3.10+ is required for the constant `OpenGL::OpenGL`.
 if (node[:platform]=='debian'&&node[:platform_version].to_i==9)
   execute "install cmake" do
-    command <<-EOS
+    command <<-'EOS'
 echo 'deb http://ftp.debian.org/debian stretch-backports main contrib' | sudo tee /etc/apt/sources.list.d/backports.list
 echo 'deb http://ftp.debian.org/debian stretch-backports-sloppy main contrib' | sudo tee -a /etc/apt/sources.list.d/backports.list
 apt-get update -y
@@ -89,7 +89,7 @@ apt install -y --force-yes --no-install-recommends cmake-data/stretch-backports 
 else
   if (node[:platform]=='ubuntu'&&node[:platform_version]=='16.04')
     execute "add cmake source" do
-      command <<-EOS
+      command <<-'EOS'
 wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc | sudo apt-key add -
 echo 'deb https://apt.kitware.com/ubuntu/ xenial main' | sudo tee /etc/apt/sources.list.d/kitware.list
 apt-get update -y
@@ -114,7 +114,7 @@ if (node[:platform]=='ubuntu' && ['22.04','24.04'].include?(node[:platform_versi
     end
   end
   execute "install pyopengl" do
-    command <<-EOS
+    command <<-'EOS'
 set -e
 python2 -m pip install pyopengl
     EOS
@@ -143,7 +143,7 @@ end
   end
 end
 execute "install sympy (1)" do
-  command <<-EOS
+  command <<-'EOS'
 set -e
 python2 -m pip install numpy==1.16.5 sympy==0.7.1 IPython==5.10.0
 python3 -m pip install numpy==1.25.0 IPython==8.14.0
@@ -156,7 +156,7 @@ end
 # sympy 0.7.4+ : TypeError: symbolic boolean expression has no truth value.
 execute "install sympy (2)" do
   # The only way is to port sympy 0.7.1 to Python3...!
-  command <<-EOS
+  command <<-'EOS'
 set -e
 python3 -m pip install https://github.com/cielavenir/sympy/releases/download/0.7.1-py3/sympy-0.7.1-py3.tar.gz
   EOS
@@ -164,14 +164,14 @@ end
 
 #must be different command
 execute "install scipy" do
-  command <<-EOS
+  command <<-'EOS'
 set -e
 python2 -m pip install scipy==1.2.3
 python3 -m pip install scipy==1.10.1
   EOS
 end
 execute "install bullet3 (2.82)" do
-  command <<-EOS
+  command <<-'EOS'
 set -e
 git clone https://github.com/bulletphysics/bullet3.git && mkdir bullet3/build
 cd bullet3/build
@@ -182,7 +182,7 @@ cd ../..
   EOS
 end
 execute "install RapidJSON" do
-  command <<-EOS
+  command <<-'EOS'
 set -e
 git clone https://github.com/Tencent/rapidjson.git && mkdir rapidjson/build
 cd rapidjson/build
@@ -193,7 +193,7 @@ cd ../..
   EOS
 end
 execute "install assimp" do
-  command <<-EOS
+  command <<-'EOS'
 set -e
 git clone https://github.com/assimp/assimp.git && mkdir assimp/build
 cd assimp/build
@@ -204,7 +204,7 @@ cd ../..
   EOS
 end
 execute "install fcl" do
-  command <<-EOS
+  command <<-'EOS'
 set -e
 git clone https://github.com/rdiankov/fcl.git && mkdir fcl/build
 cd fcl/build
@@ -215,7 +215,7 @@ cd ../..
   EOS
 end
 execute "install pybind11" do
-  command <<-EOS
+  command <<-'EOS'
 set -e
 git clone https://github.com/pybind/pybind11.git && mkdir pybind11/build
 cd pybind11/build
@@ -231,7 +231,7 @@ cd ../..
   EOS
 end
 execute "install msgpack-c" do
-  command <<-EOS
+  command <<-'EOS'
 set -e
 git clone https://github.com/msgpack/msgpack-c && mkdir msgpack-c/build
 cd msgpack-c/build
@@ -250,7 +250,7 @@ cd ../..
   EOS
 end
 execute "install openrave" do
-  command <<-EOS
+  command <<-'EOS'
 # set -e
 git clone https://github.com/rdiankov/openrave.git && mkdir openrave/build
 cd openrave/build
@@ -300,7 +300,7 @@ fi
   EOS
 end
 execute "install openrave_sample_app" do
-  command <<-EOS
+  command <<-'EOS'
 # set -e
 git clone https://github.com/cielavenir/openrave_sample_app.git
 cd openrave_sample_app
@@ -312,7 +312,7 @@ cd ..
   EOS
 end
 execute "configure jenkins" do
-  command <<-EOS
+  command <<-'EOS'
 set -e
 mkdir /var/lib/jenkins/jobs/openrave_sample_app
 wget -O /var/lib/jenkins/jobs/openrave_sample_app/config.xml https://raw.githubusercontent.com/cielavenir/mujin_recruiting/master/jenkins_config.xml
