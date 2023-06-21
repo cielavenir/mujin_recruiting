@@ -328,18 +328,22 @@ cd ../..
 if [ -d /usr/local/lib/python3.8 ] && [ ! -d /usr/local/lib/python3.8/dist-packages/openravepy ]; then
   ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.8/dist-packages/openravepy
   ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.8/dist-packages/sympy
+  ln -s /usr/local/lib/python3/site-packages/openravepy /home/$(id -u -n 1000)/openrave/lib/python3.8/site-packages/openravepy
 fi
 if [ -d /usr/local/lib/python3.9 ] && [ ! -d /usr/local/lib/python3.9/dist-packages/openravepy ]; then
   ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.9/dist-packages/openravepy
   ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.9/dist-packages/sympy
+  ln -s /usr/local/lib/python3/site-packages/openravepy /home/$(id -u -n 1000)/openrave/lib/python3.9/site-packages/openravepy
 fi
 if [ -d /usr/local/lib/python3.10 ] && [ ! -d /usr/local/lib/python3.10/dist-packages/openravepy ]; then
   ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.10/dist-packages/openravepy
   ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.10/dist-packages/sympy
+  ln -s /usr/local/lib/python3/site-packages/openravepy /home/$(id -u -n 1000)/openrave/lib/python3.10/site-packages/openravepy
 fi
 if [ -d /usr/local/lib/python3.11 ] && [ ! -d /usr/local/lib/python3.10/dist-packages/openravepy ]; then
   ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.11/dist-packages/openravepy
   ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.11/dist-packages/sympy
+  ln -s /usr/local/lib/python3/site-packages/openravepy /home/$(id -u -n 1000)/openrave/lib/python3.11/site-packages/openravepy
 fi
   EOS
 end
