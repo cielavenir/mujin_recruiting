@@ -106,8 +106,25 @@ apt-get update -y
   end
 end
 
-if (node[:platform]=='ubuntu' && ['22.04','24.04'].include?(node[:platform_version])) ||
-   (node[:platform]=='debian' && (node[:platform_version].to_i>=10 || ['buster','bullseye','bookworm'].any?{|ver|node[:platform_version].start_with?(ver)}))
+if (node[:platform]=='ubuntu' && ['24.04'].include?(node[:platform_version])) ||
+   (node[:platform]=='debian' && (node[:platform_version].to_i>=12 || ['bookworm'].any?{|ver|node[:platform_version].start_with?(ver)}))
+=begin
+  %w{openjdk-17-jre-headless jenkins}.each do |each_package|
+    package each_package do
+      action :install
+      options "--force-yes --no-install-recommends"
+    end
+  end
+=end
+  execute "Install JRE" do
+    command <<-'EOS'
+wget http://ftp.us.debian.org/debian/pool/main/c/ca-certificates-java/ca-certificates-java_20230620_all.deb
+apt install -y --force-yes --no-install-recommends ./ca-certificates-java_20230620_all.deb openjdk-17-jre-headless jenkins
+rm ca-certificates-java_20230620_all.deb
+    EOS
+  end
+elsif (node[:platform]=='ubuntu' && ['22.04'].include?(node[:platform_version])) ||
+   (node[:platform]=='debian' && (node[:platform_version].to_i>=10 || ['buster','bullseye'].any?{|ver|node[:platform_version].start_with?(ver)}))
   %w{openjdk-11-jre-headless jenkins}.each do |each_package|
     package each_package do
       action :install
