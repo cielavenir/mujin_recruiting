@@ -225,6 +225,7 @@ ninja -j4 && ninja install
 cd ../..
   EOS
 end
+=begin
 execute "install pybind11" do
   command <<-'EOS'
 set -e
@@ -235,6 +236,19 @@ cd pybind11/build
 git remote add ciel https://github.com/cielavenir/pybind11.git
 git fetch ciel
 git checkout ciel/v2.9_ty
+
+cmake .. -GNinja -DPYBIND11_TEST=OFF -DPythonLibsNew_FIND_VERSION=3
+ninja -j4 && ninja install
+cd ../..
+  EOS
+end
+=end
+execute "install pybind11" do
+  command <<-'EOS'
+set -e
+git clone https://github.com/pybind/pybind11.git && mkdir pybind11/build
+cd pybind11/build
+git checkout v2.9.2
 
 cmake .. -GNinja -DPYBIND11_TEST=OFF -DPythonLibsNew_FIND_VERSION=3
 ninja -j4 && ninja install
