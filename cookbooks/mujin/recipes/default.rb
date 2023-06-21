@@ -66,7 +66,7 @@ end
 #execute "upgrade apt package" do
 #  command "apt-get upgrade -y"
 #end
-%w{g++ gfortran git pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev qtbase5-dev libqt5opengl5-dev libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libqhull-dev libann-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev libeigen3-dev}.each do |each_package|
+%w{g++ gfortran git pkg-config debhelper gettext libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev qtbase5-dev libqt5opengl5-dev libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev libeigen3-dev}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes --no-install-recommends"
@@ -175,16 +175,6 @@ git clone https://github.com/bulletphysics/bullet3.git && mkdir bullet3/build
 cd bullet3/build
 git checkout 2.82
 cmake .. -GNinja -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC
-ninja -j4 && ninja install
-cd ../..
-  EOS
-end
-execute "install collada-dom" do
-  command <<-EOS
-set -e
-git clone https://github.com/rdiankov/collada-dom.git && mkdir collada-dom/build
-cd collada-dom/build
-cmake .. -GNinja
 ninja -j4 && ninja install
 cd ../..
   EOS
@@ -300,6 +290,10 @@ fi
 if [ -d /usr/local/lib/python3.10 ] && [ ! -d /usr/local/lib/python3.10/dist-packages/openravepy ]; then
   ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.10/dist-packages/openravepy
   ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.10/dist-packages/sympy
+fi
+if [ -d /usr/local/lib/python3.11 ] && [ ! -d /usr/local/lib/python3.10/dist-packages/openravepy ]; then
+  ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.11/dist-packages/openravepy
+  ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.11/dist-packages/sympy
 fi
   EOS
 end

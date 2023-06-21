@@ -17,13 +17,12 @@ echo "Acquire { https::Verify-Peer false }" >> /etc/apt/apt.conf.d/99verify-peer
 end
 if (node[:platform]=='ubuntu' && ['20.04','22.04','24.04'].include?(node[:platform_version])) ||
    (node[:platform]=='debian' && (node[:platform_version].to_i>=11 || ['bullseye','bookworm'].any?{|ver|node[:platform_version].start_with?(ver)}))
-  %w{libopenscenegraph-dev python3-dev python3-setuptools python3-pip python3-nose}.each do |each_package|
+  %w{libopenscenegraph-dev}.each do |each_package|
     package each_package do
       action :install
       options "--force-yes --no-install-recommends"
     end
   end
-
 else
   %w{libopenscenegraph-3.4-dev python-dev python-django python-django-nose python-setuptools python-pip}.each do |each_package|
     package each_package do
@@ -38,6 +37,12 @@ else
         options "--force-yes --no-install-recommends"
       end
     end
+  end
+end
+%w{python3-dev python3-setuptools python3-pip python3-nose}.each do |each_package|
+  package each_package do
+    action :install
+    options "--force-yes --no-install-recommends"
   end
 end
 if (node[:platform]=='ubuntu' && ['20.04','22.04','24.04'].include?(node[:platform_version])) ||
@@ -55,7 +60,7 @@ end
 #execute "upgrade apt package" do
 #  command "apt-get upgrade -y"
 #end
-%w{g++ gfortran git pkg-config debhelper gettext zlib1g-dev libminizip-dev libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev qtbase5-dev libqt5opengl5-dev libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libqhull-dev libann-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev libeigen3-dev}.each do |each_package|
+%w{g++ gfortran git pkg-config debhelper gettext libxml2-dev liburiparser-dev libpcre3-dev libgmp-dev libmpfr-dev qtbase5-dev libqt5opengl5-dev libavcodec-dev libavformat-dev libswscale-dev libsimage-dev libode-dev libhdf5-serial-dev liblapack-dev libboost-iostreams-dev libboost-regex-dev libboost-filesystem-dev libboost-system-dev libboost-thread-dev libboost-date-time-dev libboost-test-dev libmpfi-dev ffmpeg libtinyxml-dev libflann-dev sqlite3 libccd-dev libeigen3-dev}.each do |each_package|
   package each_package do
     action :install
     options "--force-yes --no-install-recommends"
@@ -100,18 +105,19 @@ if (node[:platform]=='ubuntu' && ['22.04','24.04'].include?(node[:platform_versi
       options "--force-yes --no-install-recommends"
     end
   end
-  execute "install pyopengl" do
-    command <<-EOS
-set -e
-python3 -m pip install pyopengl
-    EOS
-  end
 else
-  %w{python3-coverage python3-opengl openjdk-8-jre-headless jenkins}.each do |each_package|
+  %w{openjdk-8-jre-headless jenkins}.each do |each_package|
     package each_package do
       action :install
       options "--force-yes --no-install-recommends"
     end
+  end
+end
+
+%w{python3-coverage python3-opengl}.each do |each_package|
+  package each_package do
+    action :install
+    options "--force-yes --no-install-recommends"
   end
 end
 
@@ -156,16 +162,6 @@ git clone https://github.com/bulletphysics/bullet3.git && mkdir bullet3/build
 cd bullet3/build
 git checkout 2.82
 cmake .. -GNinja -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC
-ninja -j4 && ninja install
-cd ../..
-  EOS
-end
-execute "install collada-dom" do
-  command <<-EOS
-set -e
-git clone https://github.com/rdiankov/collada-dom.git && mkdir collada-dom/build
-cd collada-dom/build
-cmake .. -GNinja
 ninja -j4 && ninja install
 cd ../..
   EOS
@@ -249,12 +245,11 @@ git config --local user.email 'knife-solo@vagrant.example.com'
 git config --local user.name 'knife-solo'
 
 if [ ! -f ../__chef_patched__ ]; then
-# git checkout origin/production # detach HEAD
-git checkout 68e67a14f7e82b1355341ff7e1f8f2ff79f3b323 # cf https://github.com/rdiankov/openrave/issues/1189
-git cherry-pick 03d085f51e3db5b94a1049f09fdfd0c0a981fb42 # force PythonInterp to 2 # required for Ubuntu Focal / Debian Bullseye if 'python-is-python2' is not installed
+git checkout origin/production # detach HEAD
 git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # [fixbulletrave] https://github.com/rdiankov/openrave/pull/706 (fix bulletrave compilation)
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick bb7e3d83f1bb6e93692f9557c205a7307c4beeb6
+git cherry-pick 4828cebfbcefb1941e6715aef32f54008ed30f8c
 git cherry-pick 62998a607ec7a6f4b3a7614f9f59ccb8acf9415f # [fix_bug_633_cherrypick] https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
 touch ../__chef_patched__
 fi
@@ -282,6 +277,10 @@ fi
 if [ -d /usr/local/lib/python3.10 ] && [ ! -d /usr/local/lib/python3.10/dist-packages/openravepy ]; then
   ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.10/dist-packages/openravepy
   ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.10/dist-packages/sympy
+fi
+if [ -d /usr/local/lib/python3.11 ] && [ ! -d /usr/local/lib/python3.10/dist-packages/openravepy ]; then
+  ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.11/dist-packages/openravepy
+  ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.11/dist-packages/sympy
 fi
   EOS
 end
