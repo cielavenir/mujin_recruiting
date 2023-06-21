@@ -1,12 +1,3 @@
-execute "insert pseudo virtualenv conf" do
-  command <<-'EOS'
-sudo PREFIX=/home/$(id -u -n 1000)/openrave PYTHONRELPATH=$(python3 -c 'import distutils.sysconfig as sysconf; import os; print(sysconf.get_python_lib(prefix="/"))') bash -c '
-mkdir -p ${PREFIX}${PYTHONRELPATH}
-echo "import sys; sys.prefix=sys.exec_prefix=\"${PREFIX}\"; sys.path.insert(0,\"${PREFIX}${PYTHONRELPATH}\"); " > /usr/lib/python3/dist-packages/usercustomize.py
-chown -RH 1000:1000 ${PREFIX}
-'
-  EOS
-end
 execute "update apt package part1" do
   command "apt-get update -y"
 end
@@ -53,6 +44,15 @@ end
     action :install
     options "--force-yes --no-install-recommends"
   end
+end
+execute "insert pseudo virtualenv conf" do
+  command <<-'EOS'
+sudo PREFIX=/home/$(id -u -n 1000)/openrave PYTHONRELPATH=$(python3 -c 'import distutils.sysconfig as sysconf; import os; print(sysconf.get_python_lib(prefix="/"))') bash -c '
+mkdir -p ${PREFIX}${PYTHONRELPATH}
+echo "import sys; sys.prefix=sys.exec_prefix=\"${PREFIX}\"; sys.path.insert(0,\"${PREFIX}${PYTHONRELPATH}\"); " > /usr/lib/python3/dist-packages/usercustomize.py
+chown -RH 1000:1000 ${PREFIX}
+'
+  EOS
 end
 if (node[:platform]=='ubuntu' && ['20.04','22.04','24.04'].include?(node[:platform_version])) ||
    (node[:platform]=='debian' && (node[:platform_version].to_i>=10 || ['buster','bullseye','bookworm'].any?{|ver|node[:platform_version].start_with?(ver)}))
