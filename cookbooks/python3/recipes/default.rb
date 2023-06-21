@@ -158,7 +158,7 @@ end
 execute "install numpy" do
   command <<-EOS
 set -e
-python3 -m pip install numpy==1.25.0 IPython==8.14.0
+python3 -m pip install numpy==1.24.3 IPython==8.14.0
   EOS
 end
 
@@ -291,6 +291,7 @@ git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick bb7e3d83f1bb6e93692f9557c205a7307c4beeb6
 git cherry-pick 4828cebfbcefb1941e6715aef32f54008ed30f8c
 git cherry-pick 62998a607ec7a6f4b3a7614f9f59ccb8acf9415f # [fix_bug_633_cherrypick] https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
+git cherry-pick 78993a4666ff2fe4c28945969d219d70d8a3ca05 # [logging013] https://github.com/rdiankov/openrave/pull/1263
 touch ../__chef_patched__
 fi
 
@@ -300,7 +301,7 @@ if grep '^Ubuntu J' /etc/issue >/dev/null || grep '^Ubuntu 22' /etc/issue >/dev/
 fi
 
 # https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake
-VIRTUAL_ENV=/home/$(id -u -n 1000)/openrave cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DOPT_PYTHON=OFF -DPython3_FIND_VIRTUALENV=STANDARD ${FLAG_CMAKE_CXX_STANDARD}
+VIRTUAL_ENV=/home/$(id -u -n 1000)/openrave cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DOPT_PYTHON=OFF -DPython3_FIND_VIRTUALENV=STANDARD ${FLAG_CMAKE_CXX_STANDARD} -DOPT_VIDEORECORDING=OFF
 
 ninja -j4 && ninja install
 cd ../..

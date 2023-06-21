@@ -144,7 +144,7 @@ execute "install sympy (1)" do
   command <<-'EOS'
 set -e
 python2 -m pip install numpy==1.16.5 sympy==0.7.1 IPython==5.10.0
-python3 -m pip install numpy==1.25.0 IPython==8.14.0
+python3 -m pip install numpy==1.24.3 IPython==8.14.0
   EOS
 end
 
