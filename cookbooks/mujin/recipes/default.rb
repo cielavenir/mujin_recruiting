@@ -249,14 +249,7 @@ execute "install msgpack-c" do
 set -e
 git clone https://github.com/msgpack/msgpack-c && mkdir msgpack-c/build
 cd msgpack-c/build
-git config --local user.email 'knife-solo@vagrant.example.com'
-git config --local user.name 'knife-solo'
-
-if [ ! -f ../__chef_patched__ ]; then
-git checkout cpp-1.3.0
-git cherry-pick 304ff96d04599401172568d042723ff507e78cc3 # fallthrough
-touch ../__chef_patched__
-fi
+git checkout cpp-6.0.0
 
 cmake .. -GNinja -DMSGPACK_BUILD_EXAMPLES=OFF -DMSGPACK_BUILD_TESTS=OFF
 ninja -j4 && ninja install
