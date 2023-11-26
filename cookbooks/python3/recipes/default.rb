@@ -318,26 +318,13 @@ ninja -j4 && ninja install
 cd ../..
 
 # https://bugs.launchpad.net/ubuntu/+source/python3-stdlib-extensions/+bug/1832215
-if [ -d /usr/local/lib/python3.8 ] && [ ! -d /usr/local/lib/python3.8/dist-packages/openravepy ]; then
-  ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.8/dist-packages/openravepy
-  ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.8/dist-packages/sympy
-  ln -s /usr/local/lib/python3.8/site-packages/openravepy /home/$(id -u -n 1000)/openrave/lib/python3.8/site-packages/openravepy
-fi
-if [ -d /usr/local/lib/python3.9 ] && [ ! -d /usr/local/lib/python3.9/dist-packages/openravepy ]; then
-  ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.9/dist-packages/openravepy
-  ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.9/dist-packages/sympy
-  ln -s /usr/local/lib/python3.9/site-packages/openravepy /home/$(id -u -n 1000)/openrave/lib/python3.9/site-packages/openravepy
-fi
-if [ -d /usr/local/lib/python3.10 ] && [ ! -d /usr/local/lib/python3.10/dist-packages/openravepy ]; then
-  ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.10/dist-packages/openravepy
-  ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.10/dist-packages/sympy
-  ln -s /usr/local/lib/python3.10/site-packages/openravepy /home/$(id -u -n 1000)/openrave/lib/python3.10/site-packages/openravepy
-fi
-if [ -d /usr/local/lib/python3.11 ] && [ ! -d /usr/local/lib/python3.10/dist-packages/openravepy ]; then
-  ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python3.11/dist-packages/openravepy
-  ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python3.11/dist-packages/sympy
-  ln -s /usr/local/lib/python3.11/site-packages/openravepy /home/$(id -u -n 1000)/openrave/lib/python3.11/site-packages/openravepy
-fi
+for ver in 3.8 3.9 3.10 3.11 3.12 3.13; do
+  if [ -d /usr/local/lib/python${ver} ] && [ ! -d /usr/local/lib/python${ver}/dist-packages/openravepy ]; then
+    ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python${ver}/dist-packages/openravepy
+    ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python${ver}/dist-packages/sympy
+    ln -s /usr/local/lib/python${ver}/site-packages/openravepy /root/openrave/lib/python${ver}/site-packages/openravepy
+  fi
+done
   EOS
 end
 execute "install openrave_sample_app" do
