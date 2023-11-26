@@ -322,7 +322,7 @@ for ver in 3.8 3.9 3.10 3.11 3.12 3.13; do
   if [ -d /usr/local/lib/python${ver} ] && [ ! -d /usr/local/lib/python${ver}/dist-packages/openravepy ]; then
     ln -s /usr/local/lib/python3/dist-packages/openravepy /usr/local/lib/python${ver}/dist-packages/openravepy
     ln -s /usr/local/lib/python3/dist-packages/sympy /usr/local/lib/python${ver}/dist-packages/sympy
-    ln -s /usr/local/lib/python${ver}/site-packages/openravepy /root/openrave/lib/python${ver}/site-packages/openravepy
+    ln -s /usr/local/lib/python${ver}/site-packages/openravepy /home/$(id -u -n 1000)/openrave/lib/python${ver}/site-packages/openravepy
   fi
 done
   EOS
