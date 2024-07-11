@@ -158,19 +158,8 @@ end
 execute "install numpy" do
   command <<-EOS
 set -e
-python3 -m pip install numpy==1.24.3 IPython==8.14.0
-  EOS
-end
-
-# sympy 0.7.1  : Incompatible with Python3
-# sympy 0.7.2  : SympifyError: SympifyError: None
-# sympy 0.7.3  : Somehow partially compatible but there can happen some unresolved variables...
-# sympy 0.7.4+ : TypeError: symbolic boolean expression has no truth value.
-execute "install sympy" do
-  # The only way is to port sympy 0.7.1 to Python3...!
-  command <<-'EOS'
-set -e
-python3 -m pip install https://github.com/cielavenir/sympy/releases/download/0.7.1-py3/sympy-0.7.1-py3.tar.gz
+python3 -m pip install numpy==1.26.4 IPython==8.14.0
+python3 -m pip install mpmath==0.19 sympy==1.11.1
   EOS
 end
 
@@ -188,7 +177,8 @@ git clone https://github.com/bulletphysics/bullet3.git && mkdir bullet3/build
 cd bullet3/build
 git checkout 2.82
 cmake .. -GNinja -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC
-ninja -j4 && ninja install
+ninja -j4
+ninja install
 cd ../..
   EOS
 end
@@ -199,7 +189,8 @@ git clone https://github.com/Tencent/rapidjson.git && mkdir rapidjson/build
 cd rapidjson/build
 # there are no stable version available
 cmake .. -GNinja -DRAPIDJSON_HAS_STDSTRING=ON -DRAPIDJSON_BUILD_DOC=OFF -DRAPIDJSON_BUILD_EXAMPLES=OFF -DRAPIDJSON_BUILD_TESTS=OFF
-ninja -j4 && ninja install
+ninja -j4
+ninja install
 cd ../..
   EOS
 end
@@ -210,7 +201,8 @@ git clone https://github.com/assimp/assimp.git && mkdir assimp/build
 cd assimp/build
 git checkout v5.2.5
 cmake .. -GNinja
-ninja -j4 && ninja install
+ninja -j4
+ninja install
 cd ../..
   EOS
 end
@@ -221,7 +213,8 @@ git clone https://github.com/rdiankov/fcl.git && mkdir fcl/build
 cd fcl/build
 git checkout origin/trimeshContactPoints20200813
 cmake .. -GNinja -DFCL_BUILD_TESTS=OFF
-ninja -j4 && ninja install
+ninja -j4
+ninja install
 cd ../..
   EOS
 end
@@ -254,7 +247,8 @@ git fetch ciel
 git checkout ciel/v2.9_ty
 
 cmake .. -GNinja -DPYBIND11_TEST=OFF -DPythonLibsNew_FIND_VERSION=3
-ninja -j4 && ninja install
+ninja -j4
+ninja install
 cd ../..
   EOS
 end
@@ -268,7 +262,8 @@ cd pybind11/build
 git checkout v2.9.2
 
 cmake .. -GNinja -DPYBIND11_TEST=OFF -DPythonLibsNew_FIND_VERSION=3
-ninja -j4 && ninja install
+ninja -j4
+ninja install
 cd ../..
   EOS
 end
@@ -281,13 +276,14 @@ cd msgpack-c/build
 git checkout cpp-6.0.0
 
 cmake .. -GNinja -DMSGPACK_BUILD_EXAMPLES=OFF -DMSGPACK_BUILD_TESTS=OFF
-ninja -j4 && ninja install
+ninja -j4
+ninja install
 cd ../..
   EOS
 end
 execute "install openrave" do
   command <<-'EOS'
-# set -e
+set -e
 git clone https://github.com/rdiankov/openrave.git && mkdir openrave/build
 cd openrave/build
 # git remote add ciel https://github.com/cielavenir/openrave.git
@@ -301,7 +297,6 @@ git cherry-pick cb96ec7318af7753e947a333dafe49bf6cacef01 # [fixbulletrave] https
 git cherry-pick 53b90e081139a8d9c903d2e702322ba97a8bc494
 git cherry-pick bb7e3d83f1bb6e93692f9557c205a7307c4beeb6
 git cherry-pick 4828cebfbcefb1941e6715aef32f54008ed30f8c
-git cherry-pick 62998a607ec7a6f4b3a7614f9f59ccb8acf9415f # [fix_bug_633_cherrypick] https://github.com/rdiankov/openrave/pull/640 squashed (Replace semicollons in FCL_LDFLAGS with spaces)
 touch ../__chef_patched__
 fi
 
@@ -311,9 +306,10 @@ if grep '^Ubuntu J' /etc/issue >/dev/null || grep '^Ubuntu 22' /etc/issue >/dev/
 fi
 
 # https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake
-VIRTUAL_ENV=/home/$(id -u -n 1000)/openrave cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DOPT_PYTHON=OFF -DPython3_FIND_VIRTUALENV=STANDARD ${FLAG_CMAKE_CXX_STANDARD} -DOPT_VIDEORECORDING=OFF
+VIRTUAL_ENV=/home/$(id -u -n 1000)/openrave cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DOPT_PYTHON=OFF -DOPT_BULLET=OFF -DPython3_FIND_VIRTUALENV=STANDARD ${FLAG_CMAKE_CXX_STANDARD} -DOPT_VIDEORECORDING=OFF
 
-ninja -j4 && ninja install
+ninja -j4
+ninja install
 cd ../..
 
 # https://bugs.launchpad.net/ubuntu/+source/python3-stdlib-extensions/+bug/1832215
