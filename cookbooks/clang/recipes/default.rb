@@ -146,7 +146,7 @@ execute "install sympy" do
   command <<-'EOS'
 set -e
 python2 -m pip install numpy==1.16.5 sympy==0.7.1 IPython==5.10.0
-python3 -m pip install numpy==1.26.4 IPython==8.14.0
+python3 -m pip install numpy==1.26.4 IPython==8.18.1
 python3 -m pip install mpmath==0.19 sympy==1.11.1
   EOS
 end
@@ -165,7 +165,7 @@ set -e
 git clone https://github.com/bulletphysics/bullet3.git && mkdir bullet3/build
 cd bullet3/build
 git checkout 2.82
-cmake .. -GNinja -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC
+cmake .. -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINSTALL_LIBS=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC
 ninja -j4
 ninja install
 cd ../..
@@ -177,7 +177,7 @@ set -e
 git clone https://github.com/Tencent/rapidjson.git && mkdir rapidjson/build
 cd rapidjson/build
 # there are no stable version available
-cmake .. -GNinja -DRAPIDJSON_HAS_STDSTRING=ON -DRAPIDJSON_BUILD_DOC=OFF -DRAPIDJSON_BUILD_EXAMPLES=OFF -DRAPIDJSON_BUILD_TESTS=OFF
+cmake .. -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DRAPIDJSON_HAS_STDSTRING=ON -DRAPIDJSON_BUILD_DOC=OFF -DRAPIDJSON_BUILD_EXAMPLES=OFF -DRAPIDJSON_BUILD_TESTS=OFF
 ninja -j4
 ninja install
 cd ../..
@@ -189,7 +189,7 @@ set -e
 git clone https://github.com/assimp/assimp.git && mkdir assimp/build
 cd assimp/build
 git checkout v5.2.5
-cmake .. -GNinja
+cmake .. -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo
 ninja -j4
 ninja install
 cd ../..
@@ -201,7 +201,7 @@ set -e
 git clone https://github.com/rdiankov/fcl.git && mkdir fcl/build
 cd fcl/build
 git checkout origin/trimeshContactPoints20200813
-cmake .. -GNinja -DFCL_BUILD_TESTS=OFF
+cmake .. -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DFCL_BUILD_TESTS=OFF
 ninja -j4
 ninja install
 cd ../..
@@ -219,7 +219,7 @@ git remote add ciel https://github.com/cielavenir/pybind11.git
 git fetch ciel
 git checkout ciel/v2.9_ty
 
-cmake .. -GNinja -DPYBIND11_TEST=OFF -DPythonLibsNew_FIND_VERSION=2
+cmake .. -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPYBIND11_TEST=OFF -DPythonLibsNew_FIND_VERSION=2
 ninja -j4
 ninja install
 cd ../..
@@ -234,7 +234,7 @@ git clone https://github.com/pybind/pybind11.git && mkdir pybind11/build
 cd pybind11/build
 git checkout v2.9.2
 
-cmake .. -GNinja -DPYBIND11_TEST=OFF -DPythonLibsNew_FIND_VERSION=2
+cmake .. -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPYBIND11_TEST=OFF -DPythonLibsNew_FIND_VERSION=2
 ninja -j4
 ninja install
 cd ../..
@@ -248,7 +248,7 @@ git clone https://github.com/msgpack/msgpack-c && mkdir msgpack-c/build
 cd msgpack-c/build
 git checkout cpp-6.0.0
 
-cmake .. -GNinja -DMSGPACK_BUILD_EXAMPLES=OFF -DMSGPACK_BUILD_TESTS=OFF
+cmake .. -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DMSGPACK_BUILD_EXAMPLES=OFF -DMSGPACK_BUILD_TESTS=OFF
 ninja -j4
 ninja install
 cd ../..
@@ -279,7 +279,7 @@ if grep '^Ubuntu J' /etc/issue >/dev/null || grep '^Ubuntu 22' /etc/issue >/dev/
 fi
 
 # https://cmake.org/cmake/help/latest/module/FindBoost.html#boost-cmake
-cmake .. -GNinja -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DOPT_BULLET=OFF ${FLAG_CMAKE_CXX_STANDARD}
+cmake .. -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DUSE_PYBIND11_PYTHON_BINDINGS=ON -DOPT_BULLET=OFF ${FLAG_CMAKE_CXX_STANDARD}
 
 ninja -j4
 ninja install
